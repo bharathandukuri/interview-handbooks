@@ -1,0 +1,69 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./styles/tokens.css";
+@import "./styles/base.css";
+@import "./styles/prose.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Extend shadcn theme variables with design tokens without forking shadcn primitives. */
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Brand & semantic tokens */
+  --color-brand: var(--accent);
+  --color-brand-2: var(--accent-2);
+  --color-brand-soft: var(--accent-soft);
+  --color-brand-ring: var(--accent-ring);
+  --color-brand-foreground: var(--accent-fg);
+  --color-easy: var(--easy);
+  --color-medium: var(--medium);
+  --color-hard: var(--hard);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+
+  /* Shadcn variable mappings */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-fg);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--ui-accent);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--hard);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--accent-ring);
+
+  --color-sidebar: var(--surface);
+  --color-sidebar-foreground: var(--text);
+  --color-sidebar-primary: var(--accent);
+  --color-sidebar-primary-foreground: var(--accent-fg);
+  --color-sidebar-accent: var(--surface-2);
+  --color-sidebar-accent-foreground: var(--text);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--accent-ring);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
