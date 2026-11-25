@@ -148,11 +148,11 @@ function transformDirectivesAndValidateCode(
       node.lang !== "mermaid"
     ) {
       const lineCount = node.value.split(/\r?\n/).length
-      if (lineCount > 20) {
+      if (lineCount > 35) {
         warnings.push({
           filePath,
           field: "code",
-          message: `code snippet has ${lineCount} lines (recommended <= 20 lines)`,
+          message: `code snippet has ${lineCount} lines (recommended <= 35 lines)`,
         })
       }
     }
@@ -426,11 +426,11 @@ function extractSectionsAndMeta(
     const wordCount = collectSearchText(allNodes)
       .split(/\s+/)
       .filter(Boolean).length
-    if (wordCount > 250) {
+    if (wordCount > 800) {
       warnings.push({
         filePath,
         field: "body",
-        message: `concept card has ${wordCount} words (recommended <= 250 words)`,
+        message: `concept card has ${wordCount} words (recommended <= 800 words)`,
       })
     }
     return { sections: { body: html }, extraMeta: {} }

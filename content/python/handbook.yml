@@ -8,3 +8,6 @@ version: 1
 chapters:
   - 01-getting-started
   - 02-variables-and-types
+  - 03-operators-and-decisions
+  - 04-strings
+  - 05-loops

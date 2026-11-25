@@ -9,19 +9,19 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 ## Part 1: Foundations
 
-| #   | Chapter                   | What it covers                                                                     | Practice problems (examples)                      | Status  |
-| --- | ------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------- | ------- |
-| 01  | Getting Started           | What Python is, running code, print, sep/end, comments, indentation, errors, input | Name card, greet the user, friendly reply         | DONE    |
-| 02  | Variables and Basic Types | Variables, int, float, text, True/False, None, type(), converting types            | Swap two values, temperature converter, shop bill | DONE    |
-| 03  | Operators and Decisions   | + - \* / // % \*\*, comparing, and/or/not, if/elif/else                            | Even or odd, grade calculator, leap year          | NEXT    |
-| 04  | Strings                   | Indexing, slicing, string methods, f-strings, strings never change                 | Reverse a string, count vowels, palindrome        | PLANNED |
-| 05  | Loops                     | for, range, while, break/continue, nested loops                                    | Sum 1 to n, FizzBuzz, times table, prime check    | PLANNED |
+| #   | Chapter                   | What it covers                                                                     | Practice problems (examples)                      | Status |
+| --- | ------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------- | ------ |
+| 01  | Getting Started           | What Python is, running code, print, sep/end, comments, indentation, errors, input | Name card, greet the user, friendly reply         | DONE   |
+| 02  | Variables and Basic Types | Variables, int, float, text, True/False, None, type(), converting types            | Swap two values, temperature converter, shop bill | DONE   |
+| 03  | Operators and Decisions   | + - \* / // % \*\*, comparing, and/or/not, if/elif/else                            | Even or odd, grade calculator, leap year          | DONE   |
+| 04  | Strings                   | Indexing, slicing, string methods, f-strings, strings never change                 | Reverse a string, count vowels, palindrome        | DONE   |
+| 05  | Loops                     | for, range, while, break/continue, nested loops                                    | Sum 1 to n, FizzBuzz, times table, prime check    | DONE   |
 
 ## Part 2: Collecting data
 
 | #   | Chapter                    | What it covers                                                                | Practice problems (examples)                    | Status  |
 | --- | -------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------- | ------- |
-| 06  | Lists and Tuples           | Lists, methods, slicing, changing vs not changing, tuples, unpacking, copying | Max of a list, remove duplicates, rotate a list | PLANNED |
+| 06  | Lists and Tuples           | Lists, methods, slicing, changing vs not changing, tuples, unpacking, copying | Max of a list, remove duplicates, rotate a list | NEXT    |
 | 07  | Dictionaries and Sets      | Key/value pairs, counting, sets, membership                                   | Word counter, first unique letter, Two Sum      | PLANNED |
 | 08  | Comprehensions and Sorting | List/dict/set comprehensions, sorted, key, enumerate, zip                     | Squares of evens, sort by length, group words   | PLANNED |
 
@@ -51,7 +51,7 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 ## Writing rules used for every card
 
-- Simple words and short sentences. Explain every new term the first time it appears.
-- One idea per card. Concept cards stay under about 130 words.
+- Simple words and short sentences. Explain every new technical term clearly the first time it appears.
+- Give detailed, complete explanations with edge cases, clear examples, and real walkthroughs (no need to cut short).
 - Only use things that earlier cards already taught (or say clearly "you will learn this in chapter N").
 - Every code example is run and its output is checked before the card is published.

@@ -204,9 +204,9 @@ describe("loadAllHandbooks validation and warnings", () => {
     )
   })
 
-  it("emits warnings (not errors) for concept >250 words, code >20 lines, and missing revision on mostAsked", async () => {
-    const longWords = Array.from({ length: 260 }, () => "python").join(" ")
-    const longCode = Array.from({ length: 22 }, (_, i) => `x_${i} = ${i}`).join(
+  it("emits warnings (not errors) for concept >800 words, code >35 lines, and missing revision on mostAsked", async () => {
+    const longWords = Array.from({ length: 820 }, () => "python").join(" ")
+    const longCode = Array.from({ length: 37 }, (_, i) => `x_${i} = ${i}`).join(
       "\n"
     )
     const root = makeTempContent((dir) => {
