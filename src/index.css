@@ -10,7 +10,7 @@
 /* Extend shadcn theme variables with design tokens without forking shadcn primitives. */
 @theme inline {
   --font-sans: var(--font-sans);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);
 
   /* Brand & semantic tokens */

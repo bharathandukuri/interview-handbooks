@@ -1,9 +1,13 @@
+import { useFormatForDisplay } from "@tanstack/react-hotkeys"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { ArrowRight, BookOpen, Layers } from "lucide-react"
+import { ArrowRight, BookOpen, Layers, Search } from "lucide-react"
+import { useCommandPalette } from "@/app/providers"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Kbd } from "@/components/ui/kbd"
 import { getHandbooksMeta, loadHandbookBundle } from "@/lib/content"
+import { appHotkeys } from "@/lib/keyboard"
 
 export const Route = createFileRoute("/")({
   component: FoundationHome,
@@ -11,21 +15,38 @@ export const Route = createFileRoute("/")({
 
 function FoundationHome() {
   const handbooks = getHandbooksMeta()
+  const { openPalette } = useCommandPalette()
+  const formatForDisplay = useFormatForDisplay()
 
   return (
     <div className="flex min-h-svh flex-col bg-background text-foreground">
       <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-3">
           <div className="flex items-center gap-2">
             <Layers className="size-4 text-brand" aria-hidden="true" />
-            <span className="text-sm font-semibold tracking-tight">
+            <span className="font-heading text-sm font-semibold tracking-tight">
               Interview Handbooks
             </span>
             <Badge variant="outline" className="font-mono text-[11px]">
               M1 Pipeline Ready
             </Badge>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={openPalette}
+              className="gap-2 text-muted-foreground"
+            >
+              <Search className="size-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">Search</span>
+              <Kbd>
+                {formatForDisplay(appHotkeys["palette.open"].hotkey ?? "Mod+K")}
+              </Kbd>
+            </Button>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -41,6 +62,11 @@ function FoundationHome() {
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Build-time markdown compilation, Zod schema validation, Shiki
             dual-theme highlighting, and virtual handbook chunks are active.
+            Press{" "}
+            <Kbd>
+              {formatForDisplay(appHotkeys["palette.open"].hotkey ?? "Mod+K")}
+            </Kbd>{" "}
+            anytime to search cards and actions.
           </p>
 
           <div className="mt-5 space-y-3">
@@ -59,7 +85,7 @@ function FoundationHome() {
                       style={{ backgroundColor: hb.accent }}
                       aria-hidden="true"
                     />
-                    <span className="font-medium">{hb.name}</span>
+                    <span className="font-heading font-medium">{hb.name}</span>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {hb.tagline}

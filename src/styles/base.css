@@ -1,5 +1,6 @@
-@import "@fontsource-variable/inter";
-@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/fira-code";
 
 @layer base {
   html {
@@ -19,11 +20,19 @@
     min-height: 100svh;
   }
 
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+  }
+
   code,
   pre,
   kbd,
   samp {
     font-family: var(--font-mono);
+    font-variant-ligatures: contextual;
   }
 
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {

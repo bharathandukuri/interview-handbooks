@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { useFormatForDisplay } from "@tanstack/react-hotkeys"
 import { Link } from "@tanstack/react-router"
-import { ArrowLeft, Check, Flame, Sparkles } from "lucide-react"
+import { ArrowLeft, Check, Flame, Search, Sparkles } from "lucide-react"
+import { useCommandPalette } from "@/app/providers"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -138,6 +139,7 @@ export function KitView() {
   const [previewAccent, setPreviewAccent] = useState<string>("#4A90E2")
   const [difficultyFilter, setDifficultyFilter] = useState<string[]>(["easy"])
   const formatForDisplay = useFormatForDisplay()
+  const { openPalette } = useCommandPalette()
 
   const fgHex = getContrastForeground(previewAccent)
   const contrastRatio = getContrastRatio(fgHex, previewAccent).toFixed(2)
@@ -200,6 +202,20 @@ export function KitView() {
               }
             >
               Motion: {reducedMotion === true ? "Reduced" : "Auto"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={openPalette}
+              className="gap-2 text-muted-foreground"
+            >
+              <Search className="size-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">Search</span>
+              <Kbd>
+                {formatForDisplay(appHotkeys["palette.open"].hotkey ?? "Mod+K")}
+              </Kbd>
             </Button>
 
             <ThemeToggle />
@@ -423,8 +439,9 @@ export function KitView() {
               Typography & Reading Column
             </h2>
             <p className="text-sm text-muted-foreground">
-              Inter Variable for UI and reading (17px / 1.7), JetBrains Mono
-              Variable for code (14px), 720px max column.
+              Space Grotesk Variable for headings, Plus Jakarta Sans Variable
+              for UI and reading (17px / 1.7), Fira Code Variable with ligatures
+              for code (14px), 720px max column.
             </p>
           </div>
 
@@ -458,7 +475,7 @@ export function KitView() {
                   copying memory.
                 </p>
                 <pre className="border border-border bg-surface-2 p-3">
-                  <code>{`def greet(name: str) -> str:\n    return f"Hello, {name}"`}</code>
+                  <code>{`def greet(name: str) -> str:\n    return f"Hello, {name}" if name != "" else "Hi"`}</code>
                 </pre>
               </div>
             </div>

@@ -1,4 +1,14 @@
-import { useEffect, type ReactNode } from "react"
+import {
+  Suspense,
+  createContext,
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react"
 import { HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys"
 import { MotionConfig } from "motion/react"
 import { Toaster } from "@/components/ui/sonner"
@@ -6,7 +16,33 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { appHotkeys } from "@/lib/keyboard"
 import { resolveTheme, useSettingsStore } from "@/store/useSettingsStore"
 
-function SettingsDomSync() {
+const LazyCommandPalette = lazy(() =>
+  import("@/components/features/CommandPalette").then((m) => ({
+    default: m.CommandPalette,
+  }))
+)
+
+interface CommandPaletteContextValue {
+  open: boolean
+  setOpen: (open: boolean) => void
+  openPalette: () => void
+}
+
+const CommandPaletteContext = createContext<CommandPaletteContextValue>({
+  open: false,
+  setOpen: () => {},
+  openPalette: () => {},
+})
+
+export function useCommandPalette() {
+  return useContext(CommandPaletteContext)
+}
+
+function GlobalEffectsAndHotkeys({
+  onTogglePalette,
+}: {
+  onTogglePalette: () => void
+}) {
   const theme = useSettingsStore((s) => s.theme)
   const fontScale = useSettingsStore((s) => s.fontScale)
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
@@ -14,6 +50,10 @@ function SettingsDomSync() {
 
   useHotkey(appHotkeys["theme.toggle"], () => {
     toggleTheme()
+  })
+
+  useHotkey(appHotkeys["palette.open"], () => {
+    onTogglePalette()
   })
 
   useEffect(() => {
@@ -54,6 +94,29 @@ function SettingsDomSync() {
 
 export function Providers({ children }: { children: ReactNode }) {
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const [hasOpenedPalette, setHasOpenedPalette] = useState(false)
+
+  const setOpen = useCallback((nextOpen: boolean) => {
+    if (nextOpen) setHasOpenedPalette(true)
+    setPaletteOpen(nextOpen)
+  }, [])
+
+  const openPalette = useCallback(() => {
+    setHasOpenedPalette(true)
+    setPaletteOpen(true)
+  }, [])
+
+  const togglePalette = useCallback(() => {
+    setHasOpenedPalette(true)
+    setPaletteOpen((prev) => !prev)
+  }, [])
+
+  const paletteContextValue = useMemo(
+    () => ({ open: paletteOpen, setOpen, openPalette }),
+    [paletteOpen, setOpen, openPalette]
+  )
+
   const motionPolicy =
     reducedMotion === true
       ? "always"
@@ -65,9 +128,16 @@ export function Providers({ children }: { children: ReactNode }) {
     <HotkeysProvider appHotkeys={appHotkeys}>
       <MotionConfig reducedMotion={motionPolicy}>
         <TooltipProvider delayDuration={150}>
-          <SettingsDomSync />
-          {children}
-          <Toaster position="bottom-right" />
+          <CommandPaletteContext.Provider value={paletteContextValue}>
+            <GlobalEffectsAndHotkeys onTogglePalette={togglePalette} />
+            {children}
+            {hasOpenedPalette && (
+              <Suspense fallback={null}>
+                <LazyCommandPalette open={paletteOpen} onOpenChange={setOpen} />
+              </Suspense>
+            )}
+            <Toaster position="bottom-right" />
+          </CommandPaletteContext.Provider>
         </TooltipProvider>
       </MotionConfig>
     </HotkeysProvider>

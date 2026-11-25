@@ -9,6 +9,7 @@
 .prose-card h2,
 .prose-card h3,
 .prose-card h4 {
+  font-family: var(--font-heading);
   letter-spacing: -0.02em;
   font-weight: 600;
   color: var(--text);

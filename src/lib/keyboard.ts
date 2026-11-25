@@ -8,7 +8,11 @@ export const appHotkeys = defineAppHotkeys({
       name: "Command palette",
       description: "Open quick search and actions",
     },
-    options: { preventDefault: true },
+    options: {
+      preventDefault: true,
+      stopPropagation: true,
+      ignoreInputs: false,
+    },
   },
   "theme.toggle": {
     hotkey: "D",
