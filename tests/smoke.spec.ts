@@ -200,4 +200,63 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(page.locator('[data-print-hide="true"]')).toBeHidden()
     await page.emulateMedia({ media: "screen" })
   })
+
+  test("supports keyboard shortcuts for Next (ArrowRight/N), Prev (ArrowLeft/P), and Back to chapter (B) with legible kbd badges", async ({
+    page,
+  }) => {
+    await page.goto("/#/python/t/python.basics.mutable-vs-immutable")
+
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Mutable vs immutable: why does it matter?",
+      })
+    ).toBeVisible()
+
+    // Ensure Reveal button displays legible Space Kbd badge (not blank)
+    await expect(
+      page.getByRole("button", { name: /Reveal answer Space/i })
+    ).toBeVisible()
+
+    // ArrowRight moves to Next card
+    await page.keyboard.press("ArrowRight")
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: /is vs == on lists and aliases/i,
+      })
+    ).toBeVisible()
+
+    // ArrowLeft returns to Previous card
+    await page.keyboard.press("ArrowLeft")
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Mutable vs immutable: why does it matter?",
+      })
+    ).toBeVisible()
+
+    // N moves to Next card and P returns to Previous card
+    await page.keyboard.press("n")
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: /is vs == on lists and aliases/i,
+      })
+    ).toBeVisible()
+
+    await page.keyboard.press("p")
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Mutable vs immutable: why does it matter?",
+      })
+    ).toBeVisible()
+
+    // B goes Back to the parent chapter
+    await page.keyboard.press("b")
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Python Basics" })
+    ).toBeVisible()
+  })
 })

@@ -1,4 +1,4 @@
-import { defineAppHotkeys } from "@tanstack/react-hotkeys"
+import { defineAppHotkeys, type Hotkey } from "@tanstack/react-hotkeys"
 
 export const appHotkeys = defineAppHotkeys({
   "palette.open": {
@@ -59,6 +59,12 @@ export const appHotkeys = defineAppHotkeys({
     meta: { name: "Next card", description: "Navigate to next card" },
     options: { ignoreInputs: true },
   },
+  "card.back": {
+    hotkey: "B",
+    scope: "card",
+    meta: { name: "Back to chapter", description: "Return to chapter list" },
+    options: { ignoreInputs: true },
+  },
   "nav.home": {
     hotkey: ["G", "H"],
     scope: "global",
@@ -66,5 +72,30 @@ export const appHotkeys = defineAppHotkeys({
     options: { ignoreInputs: true, timeout: 800 },
   },
 })
+
+const HOTKEY_DISPLAY_OVERRIDES: Record<string, string> = {
+  Space: "Space",
+  ArrowLeft: "←",
+  ArrowRight: "→",
+  Backspace: "⌫",
+}
+
+export function formatHotkeyLabel(
+  hotkey: Hotkey,
+  formatForDisplay?: (hk: Hotkey) => string
+): string {
+  if (typeof hotkey === "string" && hotkey in HOTKEY_DISPLAY_OVERRIDES) {
+    return HOTKEY_DISPLAY_OVERRIDES[hotkey]
+  }
+  const formatted = formatForDisplay
+    ? formatForDisplay(hotkey)
+    : Array.isArray(hotkey)
+      ? hotkey.join(" ")
+      : String(hotkey)
+  return (
+    formatted.trim() ||
+    (Array.isArray(hotkey) ? hotkey.join(" ") : String(hotkey))
+  )
+}
 
 export type AppHotkeyKey = keyof typeof appHotkeys

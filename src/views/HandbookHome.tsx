@@ -36,9 +36,9 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
   const mostAskedCards = orderedCards.filter((card) => card.mostAsked)
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section
-        className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card) sm:p-8"
+        className="relative overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card) sm:p-6"
         style={{
           backgroundImage:
             "radial-gradient(560px circle at 100% 0%, var(--accent-soft), transparent 65%)",
@@ -167,7 +167,7 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                   key={card.id}
                   to="/$hb/t/$cardId"
                   params={{ hb: handbook.id, cardId: card.id }}
-                  className="group flex max-w-[290px] min-w-[250px] shrink-0 snap-start flex-col justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
+                  className="group flex max-w-[290px] min-w-[240px] shrink-0 snap-start flex-col justify-between gap-2.5 rounded-xl border border-border bg-surface p-3.5 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
@@ -227,12 +227,12 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                 key={chapter.slug}
                 to="/$hb/c/$chapter"
                 params={{ hb: handbook.id, chapter: chapter.slug }}
-                className="group flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
+                className="group flex flex-col justify-between rounded-xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
               >
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg" aria-hidden="true">
+                      <span className="text-base" aria-hidden="true">
                         {chapter.emoji}
                       </span>
                       <h3 className="font-heading text-base font-semibold tracking-tight group-hover:text-brand">
@@ -249,7 +249,7 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                   </p>
                 </div>
 
-                <div className="mt-5 space-y-2">
+                <div className="mt-4 space-y-1.5">
                   <div className="flex items-center justify-between font-mono text-[11px] text-text-faint tabular-nums">
                     <span>
                       {counts.total} {counts.total === 1 ? "card" : "cards"}

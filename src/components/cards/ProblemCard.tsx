@@ -7,7 +7,7 @@ import { RichContent } from "@/components/features/RichContent"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
-import { appHotkeys } from "@/lib/keyboard"
+import { appHotkeys, formatHotkeyLabel } from "@/lib/keyboard"
 
 export interface ProblemCardProps extends CardSharedProps {
   defaultRevealed?: boolean
@@ -131,22 +131,23 @@ export function ProblemCard({
 
       {/* Solution toggle + reveal */}
       {!isRevealed ? (
-        <div className="flex flex-col items-start justify-between gap-3 rounded-xl border border-dashed border-border bg-surface-2/60 p-4 sm:flex-row sm:items-center">
-          <div className="space-y-0.5">
-            <p className="text-sm font-medium">Ready to compare solutions?</p>
-            <p className="text-xs text-muted-foreground">
-              Reveal complexity targets, approach, and walkthrough.
-            </p>
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-2/60 px-4 py-3">
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Compare with the solution and complexity walkthrough.
+          </p>
           <Button
             type="button"
+            size="sm"
             onClick={() => setRevealed(true)}
             className="shrink-0 gap-2"
           >
-            <Eye className="size-4" aria-hidden="true" />
+            <Eye className="size-3.5" aria-hidden="true" />
             <span>Reveal solution</span>
-            <Kbd className="bg-background/20 text-inherit">
-              {formatForDisplay(appHotkeys["card.reveal"].hotkey ?? "Space")}
+            <Kbd className="bg-primary-foreground/15 text-primary-foreground">
+              {formatHotkeyLabel(
+                appHotkeys["card.reveal"].hotkey ?? "Space",
+                formatForDisplay
+              )}
             </Kbd>
           </Button>
         </div>

@@ -12,6 +12,7 @@ import {
 } from "../src/lib/selectors.ts"
 import type { HandbookBundle } from "../src/lib/types.ts"
 import { splitInlineCode, stripInlineCode } from "../src/lib/text.ts"
+import { formatHotkeyLabel } from "../src/lib/keyboard.ts"
 
 const mockBundle: HandbookBundle = {
   handbook: {
@@ -238,5 +239,14 @@ describe("inline code title formatting", () => {
       { text: " and ", isCode: false },
       { text: "**kwargs", isCode: true },
     ])
+  })
+})
+
+describe("keyboard shortcut labels", () => {
+  it("renders readable labels for Space, ArrowLeft, ArrowRight, and Mod+K", () => {
+    expect(formatHotkeyLabel("Space", () => " ")).toBe("Space")
+    expect(formatHotkeyLabel("ArrowLeft", () => "Left")).toBe("←")
+    expect(formatHotkeyLabel("ArrowRight", () => "Right")).toBe("→")
+    expect(formatHotkeyLabel("Mod+K", () => "Ctrl+K")).toBe("Ctrl+K")
   })
 })

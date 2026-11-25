@@ -7,7 +7,7 @@ import { RichContent } from "@/components/features/RichContent"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { appHotkeys } from "@/lib/keyboard"
+import { appHotkeys, formatHotkeyLabel } from "@/lib/keyboard"
 
 export interface QuestionCardProps extends CardSharedProps {
   defaultRevealed?: boolean
@@ -53,25 +53,24 @@ export function QuestionCard({
       </div>
 
       {!isRevealed ? (
-        <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-dashed border-border bg-surface-2/60 p-5 sm:flex-row sm:items-center">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-foreground">
-              Think through your answer first
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Try explaining it out loud before revealing the explanation.
-            </p>
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-2/60 px-4 py-3">
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Recall your answer before revealing.
+          </p>
 
           <Button
             type="button"
+            size="sm"
             onClick={() => setRevealed(true)}
             className="shrink-0 gap-2"
           >
-            <Eye className="size-4" aria-hidden="true" />
+            <Eye className="size-3.5" aria-hidden="true" />
             <span>Reveal answer</span>
-            <Kbd className="bg-background/20 text-inherit">
-              {formatForDisplay(appHotkeys["card.reveal"].hotkey ?? "Space")}
+            <Kbd className="bg-primary-foreground/15 text-primary-foreground">
+              {formatHotkeyLabel(
+                appHotkeys["card.reveal"].hotkey ?? "Space",
+                formatForDisplay
+              )}
             </Kbd>
           </Button>
         </div>

@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   Bookmark,
   Check,
-  Clock,
   Code2,
   Columns2,
   Eye,
@@ -13,13 +12,10 @@ import {
   Lightbulb,
   Link2,
 } from "lucide-react"
-import { motion } from "motion/react"
 import { StatusToggle } from "@/components/features/StatusToggle"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
-import { Separator } from "@/components/ui/separator"
 import {
   Tooltip,
   TooltipContent,
@@ -164,50 +160,43 @@ export function CardShell({
     }))
 
   return (
-    <motion.article
+    <article
       ref={cardRef}
       tabIndex={0}
       aria-label={card.title}
       data-slot="card-shell"
       data-card-type={card.type}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
       className={cn(
-        "rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-shadow duration-(--duration-base) ease-(--ease-standard) outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)] sm:p-6",
+        "rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-shadow duration-(--duration-base) ease-(--ease-standard) outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-ring)] sm:p-5",
         className
       )}
     >
       {/* Header */}
-      <header className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-2 py-0.5 text-xs font-medium text-muted-foreground">
+      <header className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 font-medium text-foreground/85">
               <TypeIcon className="size-3.5 text-brand" aria-hidden="true" />
               <span>{typeInfo.label}</span>
             </span>
-
-            <span className="inline-flex items-center gap-1 text-xs text-text-faint">
-              <Clock className="size-3" aria-hidden="true" />
-              <span>{card.readTime} min</span>
+            <span className="text-border" aria-hidden="true">
+              ·
             </span>
+            <span className="text-text-faint">{card.readTime} min</span>
+            {card.mostAsked && (
+              <>
+                <span className="text-border" aria-hidden="true">
+                  ·
+                </span>
+                <span className="inline-flex items-center gap-1 font-medium text-[var(--medium)]">
+                  <Flame className="size-3" aria-hidden="true" />
+                  <span>Most asked</span>
+                </span>
+              </>
+            )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            {card.mostAsked && (
-              <Badge
-                variant="outline"
-                className="gap-1 border-[color-mix(in_srgb,var(--accent-2)_45%,transparent)] bg-[color-mix(in_srgb,var(--accent-2)_14%,transparent)] text-foreground"
-              >
-                <Flame
-                  className="size-3 text-[var(--medium)]"
-                  aria-hidden="true"
-                />
-                <span>Most asked</span>
-              </Badge>
-            )}
-            <DifficultyBadge difficulty={card.difficulty} />
-          </div>
+          <DifficultyBadge difficulty={card.difficulty} />
         </div>
 
         <Heading className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
@@ -215,29 +204,21 @@ export function CardShell({
         </Heading>
 
         {card.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-x-2.5 gap-y-1 font-mono text-[11px] text-text-faint">
             {card.tags.map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="rounded-md px-2 py-0.5 font-mono text-[11px] font-normal text-muted-foreground"
-              >
-                #{tag}
-              </Badge>
+              <span key={tag}>#{tag}</span>
             ))}
           </div>
         )}
       </header>
 
-      <Separator className="my-5" />
-
       {/* Body slot */}
-      <div className="space-y-4">{children}</div>
-
-      <Separator className="my-5" />
+      <div className="mt-4 space-y-4 border-t border-border/70 pt-4">
+        {children}
+      </div>
 
       {/* Footer */}
-      <footer className="space-y-3">
+      <footer className="mt-5 space-y-2.5 border-t border-border/70 pt-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <StatusToggle
             status={status}
@@ -305,23 +286,23 @@ export function CardShell({
         </div>
 
         {resolvedRelated.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="mr-1 text-xs font-medium text-text-faint">
-              Related:
-            </span>
-            {resolvedRelated.map((rel) => (
-              <button
-                key={rel.id}
-                type="button"
-                onClick={() => onSelectRelated?.(rel.id)}
-                className="rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-muted-foreground transition-colors duration-(--duration-fast) hover:border-[var(--accent-ring)] hover:text-foreground"
-              >
-                <InlineCodeTitle text={rel.title} />
-              </button>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-faint">
+            <span className="font-medium">Related:</span>
+            {resolvedRelated.map((rel, idx) => (
+              <span key={rel.id} className="inline-flex items-center gap-2">
+                {idx > 0 && <span aria-hidden="true">·</span>}
+                <button
+                  type="button"
+                  onClick={() => onSelectRelated?.(rel.id)}
+                  className="text-muted-foreground underline decoration-border underline-offset-4 transition-colors duration-(--duration-fast) hover:text-brand hover:decoration-brand"
+                >
+                  {rel.title.replace(/`([^`]+)`/g, "$1")}
+                </button>
+              </span>
             ))}
           </div>
         )}
       </footer>
-    </motion.article>
+    </article>
   )
 }

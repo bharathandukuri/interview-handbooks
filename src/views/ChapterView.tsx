@@ -12,7 +12,6 @@ import {
   RotateCcw,
 } from "lucide-react"
 import { FilterBar } from "@/components/features/FilterBar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
@@ -114,12 +113,12 @@ export function ChapterView({
                 key={card.id}
                 to="/$hb/t/$cardId"
                 params={{ hb: handbook.id, cardId: card.id }}
-                className="group flex flex-col justify-between gap-4 rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
+                className="group flex flex-col justify-between gap-3 rounded-xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
               >
-                <div className="space-y-2.5">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 rounded-md border border-border bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-muted-foreground uppercase">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground capitalize">
                         <TypeIcon
                           className="size-3 text-brand"
                           aria-hidden="true"
@@ -127,44 +126,43 @@ export function ChapterView({
                         <span>{card.type}</span>
                       </span>
                       <DifficultyBadge difficulty={card.difficulty} />
-                      {card.mostAsked && (
-                        <Badge
-                          variant="outline"
-                          className="gap-1 border-[color-mix(in_srgb,var(--accent-2)_45%,transparent)] bg-[color-mix(in_srgb,var(--accent-2)_14%,transparent)] text-foreground"
-                        >
-                          <Flame
-                            className="size-3 text-[var(--medium)]"
-                            aria-hidden="true"
-                          />
-                          <span>Most asked</span>
-                        </Badge>
-                      )}
                     </div>
 
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1 font-mono text-[11px]",
-                        cardStatus === "known"
-                          ? "text-[var(--easy)]"
-                          : cardStatus === "revisit"
-                            ? "text-[var(--medium)]"
-                            : "text-text-faint"
+                    <div className="flex items-center gap-2">
+                      {card.mostAsked && (
+                        <span
+                          title="Most asked in interviews"
+                          className="inline-flex items-center gap-1 font-mono text-[11px] text-[var(--medium)]"
+                        >
+                          <Flame className="size-3" aria-hidden="true" />
+                          <span className="hidden sm:inline">Most asked</span>
+                        </span>
                       )}
-                    >
-                      {cardStatus === "known" && (
-                        <Check className="size-3" aria-hidden="true" />
-                      )}
-                      {cardStatus === "revisit" && (
-                        <RotateCcw className="size-3" aria-hidden="true" />
-                      )}
-                      <span>
-                        {cardStatus === "known"
-                          ? "Known"
-                          : cardStatus === "revisit"
-                            ? "Revisit"
-                            : `${card.readTime} min`}
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 font-mono text-[11px]",
+                          cardStatus === "known"
+                            ? "text-[var(--easy)]"
+                            : cardStatus === "revisit"
+                              ? "text-[var(--medium)]"
+                              : "text-text-faint"
+                        )}
+                      >
+                        {cardStatus === "known" && (
+                          <Check className="size-3" aria-hidden="true" />
+                        )}
+                        {cardStatus === "revisit" && (
+                          <RotateCcw className="size-3" aria-hidden="true" />
+                        )}
+                        <span>
+                          {cardStatus === "known"
+                            ? "Known"
+                            : cardStatus === "revisit"
+                              ? "Revisit"
+                              : `${card.readTime} min`}
+                        </span>
                       </span>
-                    </span>
+                    </div>
                   </div>
 
                   <h2 className="font-heading text-base leading-snug font-semibold tracking-tight text-foreground group-hover:text-brand">
@@ -172,8 +170,8 @@ export function ChapterView({
                   </h2>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 pt-1">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="flex items-center justify-between gap-2 pt-0.5">
+                  <div className="flex flex-wrap gap-x-2 gap-y-0.5">
                     {card.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}

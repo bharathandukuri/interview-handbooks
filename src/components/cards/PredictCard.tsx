@@ -6,7 +6,7 @@ import { CardShell, type CardSharedProps } from "@/components/cards/CardShell"
 import { RichContent } from "@/components/features/RichContent"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
-import { appHotkeys } from "@/lib/keyboard"
+import { appHotkeys, formatHotkeyLabel } from "@/lib/keyboard"
 import { cn } from "@/lib/utils"
 
 export interface PredictCardProps extends CardSharedProps {
@@ -149,19 +149,23 @@ export function PredictCard({
         </div>
       ) : (
         !isRevealed && (
-          <div className="flex items-center justify-between rounded-xl border border-dashed border-border bg-surface-2/60 p-4">
-            <span className="text-sm text-muted-foreground">
-              Predict the output before revealing
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-2/60 px-4 py-3">
+            <span className="text-xs text-muted-foreground sm:text-sm">
+              Predict the output before revealing.
             </span>
             <Button
               type="button"
+              size="sm"
               onClick={() => setRevealed(true)}
               className="gap-2"
             >
-              <Eye className="size-4" aria-hidden="true" />
+              <Eye className="size-3.5" aria-hidden="true" />
               <span>Show output</span>
-              <Kbd className="bg-background/20 text-inherit">
-                {formatForDisplay(appHotkeys["card.reveal"].hotkey ?? "Space")}
+              <Kbd className="bg-primary-foreground/15 text-primary-foreground">
+                {formatHotkeyLabel(
+                  appHotkeys["card.reveal"].hotkey ?? "Space",
+                  formatForDisplay
+                )}
               </Kbd>
             </Button>
           </div>
