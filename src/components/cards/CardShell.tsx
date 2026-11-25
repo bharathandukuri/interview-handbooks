@@ -97,7 +97,7 @@ export function CardShell({
     }
   }, [])
 
-  const hotkeyTarget = enableGlobalHotkeys ? undefined : cardRef
+  const targetOption = enableGlobalHotkeys ? {} : { target: cardRef }
 
   useHotkey(
     "K",
@@ -105,7 +105,7 @@ export function CardShell({
       onStatusChange?.(status === "known" ? undefined : "known")
     },
     {
-      target: hotkeyTarget,
+      ...targetOption,
       ignoreInputs: true,
       enabled: Boolean(onStatusChange),
     }
@@ -117,7 +117,7 @@ export function CardShell({
       onStatusChange?.(status === "revisit" ? undefined : "revisit")
     },
     {
-      target: hotkeyTarget,
+      ...targetOption,
       ignoreInputs: true,
       enabled: Boolean(onStatusChange),
     }
@@ -129,7 +129,7 @@ export function CardShell({
       onRevealKey?.()
     },
     {
-      target: hotkeyTarget,
+      ...targetOption,
       ignoreInputs: true,
       preventDefault: true,
       enabled: Boolean(onRevealKey),

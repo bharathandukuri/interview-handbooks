@@ -73,14 +73,47 @@ export function getRelatedCardsInfo(
 export function getAdjacentCards(
   bundle: HandbookBundle,
   cardId: string
-): { prev: Card | null; next: Card | null } {
+): { prev: Card | null; next: Card | null; index: number; total: number } {
   const ordered = getOrderedCards(bundle)
   const idx = ordered.findIndex((c) => c.id === cardId)
-  if (idx === -1) return { prev: null, next: null }
+  if (idx === -1) {
+    return { prev: null, next: null, index: -1, total: ordered.length }
+  }
   return {
     prev: idx > 0 ? ordered[idx - 1] : null,
     next: idx < ordered.length - 1 ? ordered[idx + 1] : null,
+    index: idx,
+    total: ordered.length,
   }
+}
+
+export function getNextUnseenCard(
+  bundle: HandbookBundle,
+  currentCardId: string,
+  statusMap: Record<string, CardStatus>
+): Card | null {
+  const ordered = getOrderedCards(bundle)
+  if (ordered.length <= 1) return null
+  const startIdx = ordered.findIndex((c) => c.id === currentCardId)
+  const baseIdx = startIdx === -1 ? 0 : startIdx
+
+  for (let offset = 1; offset < ordered.length; offset++) {
+    const candidate = ordered[(baseIdx + offset) % ordered.length]
+    if (statusMap[candidate.id] !== "known") {
+      return candidate
+    }
+  }
+  return null
+}
+
+export function getChapterTags(cards: Card[]): string[] {
+  const unique = new Set<string>()
+  for (const card of cards) {
+    for (const tag of card.tags) {
+      unique.add(tag)
+    }
+  }
+  return Array.from(unique).sort((a, b) => a.localeCompare(b))
 }
 
 export function filterCards(
@@ -88,11 +121,21 @@ export function filterCards(
   filters: CardFilterSearch,
   statusMap: Record<string, CardStatus>
 ): Card[] {
+  const selectedTags = filters.tag
+    ? filters.tag
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
+    : []
+
   const filtered = cards.filter((card) => {
     if (filters.difficulty && card.difficulty !== filters.difficulty) {
       return false
     }
-    if (filters.tag && !card.tags.includes(filters.tag)) {
+    if (
+      selectedTags.length > 0 &&
+      !selectedTags.some((tag) => card.tags.includes(tag))
+    ) {
       return false
     }
     if (filters.mostAsked && !card.mostAsked) {

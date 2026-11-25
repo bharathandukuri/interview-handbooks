@@ -23,12 +23,17 @@ export const Route = createFileRoute("/$hb/c/$chapter")({
 function ChapterRoute() {
   const { handbook, chapter, cards } = Route.useLoaderData()
   const filters = Route.useSearch()
+  const navigate = Route.useNavigate()
+
   return (
     <ChapterView
       handbook={handbook}
       chapter={chapter}
       cards={cards}
       filters={filters}
+      onFiltersChange={(next) => {
+        void navigate({ search: next, replace: true })
+      }}
     />
   )
 }

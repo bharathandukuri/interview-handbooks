@@ -33,6 +33,7 @@ export function StatusToggle({
   return (
     <div
       role="group"
+      data-slot="status-toggle"
       aria-label="Card mastery status"
       className={cn("inline-flex items-center gap-1.5", className)}
     >

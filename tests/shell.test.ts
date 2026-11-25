@@ -4,6 +4,8 @@ import {
   filterCards,
   getAdjacentCards,
   getCardsForChapter,
+  getChapterTags,
+  getNextUnseenCard,
   getOrderedCards,
   getProgressCounts,
   getRelatedCardsInfo,
@@ -178,6 +180,49 @@ describe("handbook selectors", () => {
       statusMap
     )
     expect(filtered.map((c) => c.id)).toEqual(["python.basics.equals"])
+
+    const multiTagFiltered = filterCards(
+      getOrderedCards(mockBundle),
+      { tag: "operators,syntax" },
+      statusMap
+    )
+    expect(multiTagFiltered.map((c) => c.id)).toEqual([
+      "python.basics.equals",
+      "python.functions.args",
+    ])
+  })
+
+  it("finds next unseen card skipping known cards and extracts sorted chapter tags", () => {
+    expect(getChapterTags(mockBundle.cards)).toEqual([
+      "data-types",
+      "functions",
+      "memory",
+      "operators",
+      "syntax",
+    ])
+
+    const statusSkipMiddle = {
+      "python.basics.equals": "known" as const,
+    }
+    expect(
+      getNextUnseenCard(
+        mockBundle,
+        "python.basics.mutability",
+        statusSkipMiddle
+      )?.id
+    ).toBe("python.functions.args")
+
+    const statusAllOthersKnown = {
+      "python.basics.equals": "known" as const,
+      "python.functions.args": "known" as const,
+    }
+    expect(
+      getNextUnseenCard(
+        mockBundle,
+        "python.basics.mutability",
+        statusAllOthersKnown
+      )
+    ).toBeNull()
   })
 })
 

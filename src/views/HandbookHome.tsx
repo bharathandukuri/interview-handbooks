@@ -1,11 +1,17 @@
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, Layers } from "lucide-react"
+import { ArrowRight, Flame, History, Layers, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { HandbookIcon } from "@/components/ui/handbook-icon"
+import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import { Progress } from "@/components/ui/progress"
-import { getCardsForChapter, getProgressCounts } from "@/lib/selectors"
-import { stripInlineCode } from "@/lib/text"
+import {
+  getCardsForChapter,
+  getOrderedCards,
+  getProgressCounts,
+} from "@/lib/selectors"
 import type { HandbookBundle } from "@/lib/types"
+import { cn } from "@/lib/utils"
 import { useProgressStore } from "@/store/useProgressStore"
 
 interface HandbookHomeProps {
@@ -19,14 +25,25 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
   )
   const { handbook } = bundle
 
+  const orderedCards = getOrderedCards(bundle)
   const overall = getProgressCounts(bundle.cards, statusMap)
   const lastCard = lastVisitedCardId
     ? bundle.cards.find((c) => c.id === lastVisitedCardId)
     : undefined
+  const lastCardChapter = lastCard
+    ? handbook.chapters.find((ch) => ch.slug === lastCard.chapter)
+    : undefined
+  const mostAskedCards = orderedCards.filter((card) => card.mostAsked)
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card) sm:p-8">
+      <section
+        className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card) sm:p-8"
+        style={{
+          backgroundImage:
+            "radial-gradient(560px circle at 100% 0%, var(--accent-soft), transparent 65%)",
+        }}
+      >
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 font-mono text-xs text-text-faint">
             <HandbookIcon
@@ -61,39 +78,142 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
           <Progress value={overall.percent} className="h-1.5" />
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          {lastCard ? (
+        {lastCard && (
+          <Link
+            to="/$hb/t/$cardId"
+            params={{ hb: handbook.id, cardId: lastCard.id }}
+            data-slot="continue-card"
+            className="group mt-6 flex items-center justify-between gap-4 rounded-xl border border-border bg-surface-2/70 p-4 transition-colors hover:border-[var(--accent-ring)]"
+          >
+            <div className="min-w-0 space-y-1">
+              <div className="flex items-center gap-2 text-xs text-text-faint">
+                <History className="size-3.5 text-brand" aria-hidden="true" />
+                <span>Continue where you left off</span>
+                {lastCardChapter && (
+                  <>
+                    <span>·</span>
+                    <span className="truncate">
+                      {lastCardChapter.emoji} {lastCardChapter.title}
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="truncate font-heading text-sm font-semibold text-foreground group-hover:text-brand">
+                  <InlineCodeTitle text={lastCard.title} />
+                </span>
+                <DifficultyBadge
+                  difficulty={lastCard.difficulty}
+                  className="px-1.5 py-0 text-[10px]"
+                />
+              </div>
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-brand">
+              <span className="hidden sm:inline">Resume</span>
+              <ArrowRight
+                className="size-4 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </span>
+          </Link>
+        )}
+
+        <div className="mt-5 flex flex-wrap items-center gap-2.5">
+          {!lastCard && orderedCards[0] && (
             <Button asChild size="sm">
               <Link
                 to="/$hb/t/$cardId"
-                params={{ hb: handbook.id, cardId: lastCard.id }}
+                params={{ hb: handbook.id, cardId: orderedCards[0].id }}
               >
-                <span>Resume: {stripInlineCode(lastCard.title)}</span>
+                <span>Start studying</span>
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </Button>
-          ) : (
-            bundle.cards[0] && (
-              <Button asChild size="sm">
-                <Link
-                  to="/$hb/t/$cardId"
-                  params={{ hb: handbook.id, cardId: bundle.cards[0].id }}
-                >
-                  <span>Start studying</span>
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              </Button>
-            )
           )}
 
           <Button asChild variant="outline" size="sm">
             <Link to="/$hb/flashcards" params={{ hb: handbook.id }}>
               <Layers className="size-4" aria-hidden="true" />
-              <span>Practice flashcards</span>
+              <span>Flashcards</span>
+            </Link>
+          </Button>
+
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/$hb/revision" params={{ hb: handbook.id }}>
+              <Zap className="size-4" aria-hidden="true" />
+              <span>Quick Revision</span>
             </Link>
           </Button>
         </div>
       </section>
+
+      {mostAskedCards.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center gap-2 font-heading text-lg font-semibold tracking-tight">
+              <Flame
+                className="size-4 text-[var(--medium)]"
+                aria-hidden="true"
+              />
+              <span>Most Asked</span>
+            </h2>
+            <span className="font-mono text-xs text-text-faint">
+              High-frequency interview topics
+            </span>
+          </div>
+
+          <div
+            data-slot="most-asked-strip"
+            className="flex snap-x gap-3 overflow-x-auto pb-2"
+          >
+            {mostAskedCards.map((card) => {
+              const ch = handbook.chapters.find((c) => c.slug === card.chapter)
+              const cardStatus = statusMap[card.id]
+              return (
+                <Link
+                  key={card.id}
+                  to="/$hb/t/$cardId"
+                  params={{ hb: handbook.id, cardId: card.id }}
+                  className="group flex max-w-[290px] min-w-[250px] shrink-0 snap-start flex-col justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <DifficultyBadge
+                        difficulty={card.difficulty}
+                        className="px-2 py-0 text-[10px]"
+                      />
+                      <span
+                        className={cn(
+                          "size-2 rounded-full",
+                          cardStatus === "known"
+                            ? "bg-[var(--easy)]"
+                            : cardStatus === "revisit"
+                              ? "bg-[var(--medium)]"
+                              : "bg-border"
+                        )}
+                        title={cardStatus ?? "Untouched"}
+                      />
+                    </div>
+                    <h3 className="line-clamp-2 font-heading text-sm leading-snug font-semibold text-foreground group-hover:text-brand">
+                      <InlineCodeTitle text={card.title} />
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center justify-between font-mono text-[11px] text-text-faint">
+                    <span className="truncate">
+                      {ch ? `${ch.emoji} ${ch.title}` : card.chapter}
+                    </span>
+                    <ArrowRight
+                      className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="space-y-4">
         <div className="flex items-baseline justify-between">
