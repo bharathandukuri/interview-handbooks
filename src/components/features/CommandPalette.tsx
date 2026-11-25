@@ -27,6 +27,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command"
+import { Kbd } from "@/components/ui/kbd"
 import { getHandbooksMeta, loadHandbookSearch } from "@/lib/content"
 import { appHotkeys } from "@/lib/keyboard"
 import type { CardType, SearchEntry } from "@/lib/types"
@@ -275,6 +276,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             </>
           )}
         </CommandList>
+        <div className="flex items-center justify-between border-t border-border bg-surface-2/60 px-4 py-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1">
+              <Kbd>↑</Kbd>
+              <Kbd>↓</Kbd>
+              <span>Navigate</span>
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Kbd>↵</Kbd>
+              <span>Open</span>
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-text-faint">
+            {entries.length} indexed cards
+          </span>
+        </div>
       </Command>
     </CommandDialog>
   )

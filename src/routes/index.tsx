@@ -37,10 +37,12 @@ function FoundationHome() {
               variant="outline"
               size="sm"
               onClick={openPalette}
-              className="gap-2 text-muted-foreground"
+              className="h-9 w-48 justify-between bg-surface-2 px-3 text-sm text-muted-foreground hover:border-[var(--accent-ring)] hover:text-foreground sm:w-64"
             >
-              <Search className="size-3.5" aria-hidden="true" />
-              <span className="hidden sm:inline">Search</span>
+              <span className="inline-flex items-center gap-2">
+                <Search className="size-3.5" aria-hidden="true" />
+                <span>Search...</span>
+              </span>
               <Kbd>
                 {formatForDisplay(appHotkeys["palette.open"].hotkey ?? "Mod+K")}
               </Kbd>

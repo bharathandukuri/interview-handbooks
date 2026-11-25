@@ -226,10 +226,12 @@ export function KitView() {
               variant="outline"
               size="sm"
               onClick={openPalette}
-              className="gap-2 text-muted-foreground"
+              className="h-9 w-48 justify-between bg-surface-2 px-3 text-sm text-muted-foreground hover:border-[var(--accent-ring)] hover:text-foreground sm:w-64"
             >
-              <Search className="size-3.5" aria-hidden="true" />
-              <span className="hidden sm:inline">Search</span>
+              <span className="inline-flex items-center gap-2">
+                <Search className="size-3.5" aria-hidden="true" />
+                <span>Search...</span>
+              </span>
               <Kbd>
                 {formatForDisplay(appHotkeys["palette.open"].hotkey ?? "Mod+K")}
               </Kbd>
@@ -491,8 +493,20 @@ export function KitView() {
                   <code>items = [1, 2]</code> bind references rather than
                   copying memory.
                 </p>
-                <pre className="border border-border bg-surface-2 p-3">
-                  <code>{`def greet(name: str) -> str:\n    return f"Hello, {name}" if name != "" else "Hi"`}</code>
+                <pre
+                  className="shiki shiki-themes github-dark github-light border border-border bg-surface-2 p-3"
+                  style={
+                    {
+                      "--shiki-dark": "#e1e4e8",
+                      "--shiki-light": "#24292e",
+                    } as React.CSSProperties
+                  }
+                >
+                  <code
+                    dangerouslySetInnerHTML={{
+                      __html: `<span class="line"><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">function</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1"> greet</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">(</span><span style="--shiki-dark:#FFAB70;--shiki-light:#E36209">name</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> string</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">)</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> string</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> {</span></span>\n<span class="line"><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">  return</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> name </span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">!==</span><span style="--shiki-dark:#9ECBFF;--shiki-light:#032F62"> ""</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49"> ?</span><span style="--shiki-dark:#9ECBFF;--shiki-light:#032F62"> \`Hello, </span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">\${</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">name</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">}</span><span style="--shiki-dark:#9ECBFF;--shiki-light:#032F62">\`</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49"> :</span><span style="--shiki-dark:#9ECBFF;--shiki-light:#032F62"> "Hi"</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">;</span></span>\n<span class="line"><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">}</span></span>`,
+                    }}
+                  />
                 </pre>
               </div>
             </div>
@@ -727,7 +741,7 @@ export function KitView() {
           <CodeBlock
             language="typescript"
             title="CodeBlock with Output"
-            html='<pre class="shiki"><code>const sum = (a: number, b: number) =&gt; a + b;\nconsole.log(sum(2, 3));</code></pre>'
+            html='<pre class="shiki shiki-themes github-dark github-light" style="--shiki-dark:#e1e4e8;--shiki-light:#24292e;--shiki-dark-bg:#24292e;--shiki-light-bg:#fff" tabindex="0"><code><span class="line"><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">const</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1"> sum</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49"> =</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> (</span><span style="--shiki-dark:#FFAB70;--shiki-light:#E36209">a</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> number</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">, </span><span style="--shiki-dark:#FFAB70;--shiki-light:#E36209">b</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> number</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">) </span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">=&gt;</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> a </span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">+</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> b;</span></span>&#10;<span class="line"><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">console.</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1">log</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">(</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1">sum</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">(</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">2</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">, </span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">3</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">));</span></span></code></pre>'
             outputHtml="<pre><code>5</code></pre>"
           />
         </section>
