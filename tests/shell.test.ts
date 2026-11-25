@@ -9,6 +9,7 @@ import {
   getRelatedCardsInfo,
 } from "../src/lib/selectors.ts"
 import type { HandbookBundle } from "../src/lib/types.ts"
+import { splitInlineCode, stripInlineCode } from "../src/lib/text.ts"
 
 const mockBundle: HandbookBundle = {
   handbook: {
@@ -177,5 +178,20 @@ describe("handbook selectors", () => {
       statusMap
     )
     expect(filtered.map((c) => c.id)).toEqual(["python.basics.equals"])
+  })
+})
+
+describe("inline code title formatting", () => {
+  it("strips markdown backticks cleanly for plain text labels", () => {
+    expect(stripInlineCode("`is` vs `==` on lists")).toBe("is vs == on lists")
+    expect(stripInlineCode("No code here")).toBe("No code here")
+  })
+
+  it("splits markdown inline code spans without losing surrounding text", () => {
+    expect(splitInlineCode("`*args` and `**kwargs`")).toEqual([
+      { text: "*args", isCode: true },
+      { text: " and ", isCode: false },
+      { text: "**kwargs", isCode: true },
+    ])
   })
 })

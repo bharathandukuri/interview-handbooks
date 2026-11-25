@@ -18,6 +18,7 @@ import { StatusToggle } from "@/components/features/StatusToggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
+import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import { Separator } from "@/components/ui/separator"
 import {
   Tooltip,
@@ -210,7 +211,7 @@ export function CardShell({
         </div>
 
         <Heading className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          {card.title}
+          <InlineCodeTitle text={card.title} />
         </Heading>
 
         {card.tags.length > 0 && (
@@ -315,7 +316,7 @@ export function CardShell({
                 onClick={() => onSelectRelated?.(rel.id)}
                 className="rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-muted-foreground transition-colors duration-(--duration-fast) hover:border-[var(--accent-ring)] hover:text-foreground"
               >
-                {rel.title}
+                <InlineCodeTitle text={rel.title} />
               </button>
             ))}
           </div>

@@ -33,6 +33,7 @@ import {
 import { Kbd } from "@/components/ui/kbd"
 import { getHandbooksMeta, loadHandbookSearch } from "@/lib/content"
 import { appHotkeys } from "@/lib/keyboard"
+import { stripInlineCode } from "@/lib/text"
 import type { CardType, SearchEntry } from "@/lib/types"
 import { useSettingsStore } from "@/store/useSettingsStore"
 
@@ -270,7 +271,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     }}
                   >
                     <Icon className="size-4 text-brand" aria-hidden="true" />
-                    <span className="flex-1 truncate">{card.title}</span>
+                    <span className="flex-1 truncate">
+                      {stripInlineCode(card.title)}
+                    </span>
                     <span className="hidden text-xs text-muted-foreground sm:inline">
                       {card.chapterTitle}
                     </span>

@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react"
-import { useFormatForDisplay } from "@tanstack/react-hotkeys"
-import { Link } from "@tanstack/react-router"
-import { ArrowUpRight, Compass, Keyboard, ListTree } from "lucide-react"
-import { DifficultyBadge } from "@/components/ui/difficulty-badge"
-import { Kbd } from "@/components/ui/kbd"
-import { getRelatedCardsInfo } from "@/lib/selectors"
-import type { Card, HandbookBundle } from "@/lib/types"
+import type { Card } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
 interface TocSectionItem {
@@ -14,7 +8,6 @@ interface TocSectionItem {
 }
 
 interface TocPanelProps {
-  bundle: HandbookBundle
   activeCard?: Card
 }
 
@@ -61,12 +54,13 @@ function CardSectionsToc({ activeCard }: { activeCard: Card }) {
   const [activeId, setActiveId] = useState<string>("")
 
   useEffect(() => {
-    const collectSections = (): TocSectionItem[] => {
+    const collectVisibleSections = (): TocSectionItem[] => {
       const container = document.querySelector("[data-card-reader]")
       if (!container) return []
       const nodes = [
         ...container.querySelectorAll<HTMLElement>('[id^="section-"]'),
-      ]
+      ].filter((el) => !el.closest("[hidden]"))
+
       return nodes
         .map((el) => ({
           id: el.id,
@@ -81,7 +75,7 @@ function CardSectionsToc({ activeCard }: { activeCard: Card }) {
     let intersectionObserver: IntersectionObserver | null = null
     const bindIntersectionObserver = () => {
       intersectionObserver?.disconnect()
-      const found = collectSections()
+      const found = collectVisibleSections()
       setSections(found)
       if (found.length > 0) {
         setActiveId((prev) =>
@@ -126,7 +120,12 @@ function CardSectionsToc({ activeCard }: { activeCard: Card }) {
         : null
 
     if (container && mutationObserver) {
-      mutationObserver.observe(container, { childList: true, subtree: true })
+      mutationObserver.observe(container, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["hidden", "data-state"],
+      })
     }
 
     return () => {
@@ -152,166 +151,44 @@ function CardSectionsToc({ activeCard }: { activeCard: Card }) {
   }
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-3.5">
-      <div className="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-wider text-text-faint uppercase">
-        <ListTree className="size-3.5 text-brand" aria-hidden="true" />
-        <span>On this card</span>
-      </div>
-      <nav aria-label="Card sections">
-        <ul className="space-y-1 border-l border-border pl-2.5">
-          {sections.map((section) => {
-            const isActive = activeId === section.id
-            return (
-              <li key={section.id}>
-                <button
-                  type="button"
-                  onClick={() => handleScrollToSection(section.id)}
-                  className={cn(
-                    "w-full rounded-md px-2 py-1 text-left text-xs transition-colors",
-                    isActive
-                      ? "bg-[var(--accent-soft)] font-medium text-brand"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {section.label}
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-      </nav>
-    </section>
-  )
-}
-
-export function TocPanel({ bundle, activeCard }: TocPanelProps) {
-  const formatForDisplay = useFormatForDisplay()
-  const relatedCards = activeCard
-    ? getRelatedCardsInfo(activeCard, bundle.cards)
-    : []
-  const cardsById = new Map(bundle.cards.map((c) => [c.id, c]))
-
-  return (
     <aside
       data-slot="toc-panel"
-      aria-label="On this page"
-      className="hidden w-(--toc-width) shrink-0 xl:block"
+      aria-label="On this card"
+      className="hidden w-48 shrink-0 xl:block"
     >
-      <div className="sticky top-20 max-h-[calc(100vh-6rem)] space-y-5 overflow-y-auto pr-1">
-        {activeCard ? (
-          <>
-            <CardSectionsToc key={activeCard.id} activeCard={activeCard} />
-
-            {relatedCards.length > 0 && (
-              <section className="rounded-xl border border-border bg-surface p-3.5">
-                <div className="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-wider text-text-faint uppercase">
-                  <Compass className="size-3.5 text-brand" aria-hidden="true" />
-                  <span>Related cards</span>
-                </div>
-                <ul className="space-y-2">
-                  {relatedCards.map((rel) => {
-                    const target = cardsById.get(rel.id)
-                    return (
-                      <li key={rel.id}>
-                        <Link
-                          to="/$hb/t/$cardId"
-                          params={{ hb: bundle.handbook.id, cardId: rel.id }}
-                          className="group flex flex-col gap-1 rounded-lg border border-border bg-surface-2/60 p-2.5 text-xs transition-colors hover:border-[var(--accent-ring)]"
-                        >
-                          <div className="flex items-start justify-between gap-1.5">
-                            <span className="font-medium text-foreground group-hover:text-brand">
-                              {rel.title}
-                            </span>
-                            <ArrowUpRight
-                              className="size-3.5 shrink-0 text-text-faint group-hover:text-brand"
-                              aria-hidden="true"
-                            />
-                          </div>
-                          {target && (
-                            <DifficultyBadge
-                              difficulty={target.difficulty}
-                              className="w-fit px-1.5 py-0 text-[10px]"
-                            />
-                          )}
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </section>
-            )}
-          </>
-        ) : (
-          <section className="rounded-xl border border-border bg-surface p-3.5">
-            <div className="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-wider text-text-faint uppercase">
-              <Compass className="size-3.5 text-brand" aria-hidden="true" />
-              <span>Chapters</span>
-            </div>
-            <ul className="space-y-1">
-              {bundle.handbook.chapters.map((ch) => (
-                <li key={ch.slug}>
-                  <Link
-                    to="/$hb/c/$chapter"
-                    params={{ hb: bundle.handbook.id, chapter: ch.slug }}
-                    className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
+      <div className="sticky top-20 space-y-2">
+        <div className="font-mono text-[11px] font-medium tracking-wider text-text-faint uppercase">
+          On this card
+        </div>
+        <nav aria-label="Card sections">
+          <ul className="space-y-1 border-l border-border pl-3">
+            {sections.map((section) => {
+              const isActive = activeId === section.id
+              return (
+                <li key={section.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleScrollToSection(section.id)}
+                    className={cn(
+                      "w-full py-0.5 text-left text-xs transition-colors",
+                      isActive
+                        ? "font-medium text-brand"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
                   >
-                    <span className="truncate">
-                      {ch.emoji} {ch.title}
-                    </span>
-                    <span className="font-mono text-[11px] text-text-faint">
-                      {ch.cardCount}
-                    </span>
-                  </Link>
+                    {section.label}
+                  </button>
                 </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <section className="rounded-xl border border-border bg-surface p-3.5">
-          <div className="mb-2.5 flex items-center gap-1.5 font-mono text-[11px] font-medium tracking-wider text-text-faint uppercase">
-            <Keyboard className="size-3.5 text-brand" aria-hidden="true" />
-            <span>Shortcuts</span>
-          </div>
-          <dl className="space-y-1.5 text-xs text-muted-foreground">
-            <div className="flex items-center justify-between">
-              <dt>Search</dt>
-              <dd>
-                <Kbd>{formatForDisplay("Mod+K")}</Kbd>
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt>Theme</dt>
-              <dd>
-                <Kbd>{formatForDisplay("D")}</Kbd>
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt>Home</dt>
-              <dd>
-                <Kbd>{formatForDisplay(["G", "H"])}</Kbd>
-              </dd>
-            </div>
-            {activeCard && (
-              <>
-                <div className="flex items-center justify-between">
-                  <dt>Reveal</dt>
-                  <dd>
-                    <Kbd>{formatForDisplay("Space")}</Kbd>
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt>Known / Revisit</dt>
-                  <dd className="inline-flex items-center gap-1">
-                    <Kbd>{formatForDisplay("K")}</Kbd>
-                    <Kbd>{formatForDisplay("R")}</Kbd>
-                  </dd>
-                </div>
-              </>
-            )}
-          </dl>
-        </section>
+              )
+            })}
+          </ul>
+        </nav>
       </div>
     </aside>
   )
+}
+
+export function TocPanel({ activeCard }: TocPanelProps) {
+  if (!activeCard) return null
+  return <CardSectionsToc key={activeCard.id} activeCard={activeCard} />
 }

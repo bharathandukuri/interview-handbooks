@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Check, Flame, RotateCcw } from "lucide-react"
-import { ProgressRing } from "@/components/features/ProgressRing"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
+import { InlineCodeTitle } from "@/components/ui/inline-code-title"
+import { Progress } from "@/components/ui/progress"
 import type { CardFilterSearch } from "@/lib/search-params"
 import { filterCards, getProgressCounts } from "@/lib/selectors"
 import type { Card, ChapterMeta, HandbookMeta } from "@/lib/types"
@@ -37,32 +38,26 @@ export function ChapterView({
   return (
     <div className="space-y-6">
       <header className="rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card)">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl" aria-hidden="true">
-                {chapter.emoji}
-              </span>
-              <h1 className="font-heading text-2xl font-semibold tracking-tight">
-                {chapter.title}
-              </h1>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {chapter.description}
-            </p>
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl" aria-hidden="true">
+              {chapter.emoji}
+            </span>
+            <h1 className="font-heading text-2xl font-semibold tracking-tight">
+              {chapter.title}
+            </h1>
           </div>
+          <p className="text-sm text-muted-foreground">{chapter.description}</p>
+        </div>
 
-          <div className="flex items-center gap-3 rounded-xl border border-border bg-surface-2 px-3.5 py-2">
-            <ProgressRing
-              value={counts.percent}
-              size={32}
-              strokeWidth={3}
-              label={`${chapter.title} progress`}
-            />
-            <div className="font-mono text-xs text-muted-foreground">
-              {counts.known}/{counts.total} known
-            </div>
+        <div className="mt-5 space-y-2">
+          <div className="flex items-center justify-between font-mono text-xs text-text-faint tabular-nums">
+            <span>
+              {counts.known} of {counts.total} known
+            </span>
+            <span>{counts.percent}%</span>
           </div>
+          <Progress value={counts.percent} className="h-1.5" />
         </div>
 
         {activeFilters.length > 0 && (
@@ -157,7 +152,7 @@ export function ChapterView({
                   </div>
 
                   <h2 className="font-heading text-base font-semibold tracking-tight text-foreground group-hover:text-brand">
-                    {card.title}
+                    <InlineCodeTitle text={card.title} />
                   </h2>
 
                   {card.tags.length > 0 && (

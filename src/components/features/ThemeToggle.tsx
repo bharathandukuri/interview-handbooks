@@ -9,11 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Kbd } from "@/components/ui/kbd"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { appHotkeys } from "@/lib/keyboard"
 import {
   resolveTheme,
@@ -42,66 +37,46 @@ export function ThemeToggle() {
   )
 
   return (
-    <div className="inline-flex items-center gap-1">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${resolved === "dark" ? "light" : "dark"} theme`}
-          >
-            {resolved === "dark" ? (
-              <Moon className="size-4" aria-hidden="true" />
-            ) : (
-              <Sun className="size-4" aria-hidden="true" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <span>Toggle theme</span>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          aria-label={`Color theme (${theme})`}
+          className="h-8 gap-1.5 bg-surface-2 px-2.5 text-xs text-muted-foreground hover:text-foreground sm:h-9"
+        >
+          {resolved === "dark" ? (
+            <Moon className="size-3.5 text-foreground" aria-hidden="true" />
+          ) : (
+            <Sun className="size-3.5 text-foreground" aria-hidden="true" />
+          )}
+          <span className="hidden capitalize sm:inline">{theme}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        {THEME_OPTIONS.map((option) => {
+          const Icon = option.icon
+          const selected = theme === option.value
+          return (
+            <DropdownMenuItem
+              key={option.value}
+              onSelect={() => setTheme(option.value)}
+            >
+              <Icon className="size-4" aria-hidden="true" />
+              <span className="flex-1">{option.label}</span>
+              {selected && (
+                <Check className="size-3.5 text-brand" aria-hidden="true" />
+              )}
+            </DropdownMenuItem>
+          )
+        })}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={toggleTheme}>
+          <span className="flex-1 text-muted-foreground">Quick toggle</span>
           <Kbd>{shortcutLabel}</Kbd>
-        </TooltipContent>
-      </Tooltip>
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            aria-label="Theme mode options"
-            className="gap-1.5 text-xs text-muted-foreground"
-          >
-            <span className="capitalize">{theme}</span>
-            <Kbd className="hidden sm:inline-flex">{shortcutLabel}</Kbd>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
-          {THEME_OPTIONS.map((option) => {
-            const Icon = option.icon
-            const selected = theme === option.value
-            return (
-              <DropdownMenuItem
-                key={option.value}
-                onSelect={() => setTheme(option.value)}
-              >
-                <Icon className="size-4" aria-hidden="true" />
-                <span className="flex-1">{option.label}</span>
-                {selected && (
-                  <Check className="size-3.5 text-brand" aria-hidden="true" />
-                )}
-              </DropdownMenuItem>
-            )
-          })}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={toggleTheme}>
-            <span className="flex-1 text-muted-foreground">Quick toggle</span>
-            <Kbd>{shortcutLabel}</Kbd>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

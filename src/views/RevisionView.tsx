@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { Zap } from "lucide-react"
+import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import { getCardsForChapter } from "@/lib/selectors"
 import type { HandbookBundle } from "@/lib/types"
 
@@ -53,7 +54,7 @@ export function RevisionView({ bundle }: RevisionViewProps) {
                       params={{ hb: handbook.id, cardId: card.id }}
                       className="font-medium text-foreground hover:text-brand"
                     >
-                      {card.title}
+                      <InlineCodeTitle text={card.title} />
                     </Link>
                     <ul className="mt-1.5 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
                       {card.revision.map((line, i) => (

@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { CardRenderer } from "@/components/cards/CardRenderer"
 import { Button } from "@/components/ui/button"
 import { getAdjacentCards, getRelatedCardsInfo } from "@/lib/selectors"
+import { stripInlineCode } from "@/lib/text"
 import type { Card, HandbookBundle } from "@/lib/types"
 import { useProgressStore } from "@/store/useProgressStore"
 
@@ -73,7 +74,7 @@ export function CardReader({ bundle, card }: CardReaderProps) {
               params={{ hb: bundle.handbook.id, cardId: prev.id }}
             >
               <ArrowLeft className="size-4 shrink-0" aria-hidden="true" />
-              <span className="truncate">{prev.title}</span>
+              <span className="truncate">{stripInlineCode(prev.title)}</span>
             </Link>
           </Button>
         ) : (
@@ -86,7 +87,7 @@ export function CardReader({ bundle, card }: CardReaderProps) {
               to="/$hb/t/$cardId"
               params={{ hb: bundle.handbook.id, cardId: next.id }}
             >
-              <span className="truncate">{next.title}</span>
+              <span className="truncate">{stripInlineCode(next.title)}</span>
               <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
             </Link>
           </Button>

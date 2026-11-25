@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, Bookmark, Layers, Zap } from "lucide-react"
-import { ProgressRing } from "@/components/features/ProgressRing"
+import { ArrowRight, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 import { getCardsForChapter, getProgressCounts } from "@/lib/selectors"
+import { stripInlineCode } from "@/lib/text"
 import type { HandbookBundle } from "@/lib/types"
 import { useProgressStore } from "@/store/useProgressStore"
 
@@ -12,7 +13,6 @@ interface HandbookHomeProps {
 
 export function HandbookHome({ bundle }: HandbookHomeProps) {
   const statusMap = useProgressStore((s) => s.status)
-  const bookmarks = useProgressStore((s) => s.bookmarks)
   const lastVisitedCardId = useProgressStore(
     (s) => s.lastVisited[bundle.handbook.id]
   )
@@ -22,59 +22,46 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
   const lastCard = lastVisitedCardId
     ? bundle.cards.find((c) => c.id === lastVisitedCardId)
     : undefined
-  const hbBookmarkCount = bundle.cards.filter((c) =>
-    bookmarks.includes(c.id)
-  ).length
 
   return (
     <div className="space-y-8">
       <section className="rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card) sm:p-8">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-2 px-3 py-1 font-mono text-xs text-muted-foreground">
-              <span
-                className="size-2 rounded-full bg-brand"
-                aria-hidden="true"
-              />
-              <span>
-                {handbook.chapterCount} chapters · {handbook.cardCount} cards
-              </span>
-            </div>
-            <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              {handbook.name} Interview Handbook
-            </h1>
-            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {handbook.tagline}
-            </p>
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 font-mono text-xs text-text-faint">
+            <span className="size-2 rounded-full bg-brand" aria-hidden="true" />
+            <span>
+              {handbook.chapterCount} chapters · {handbook.cardCount} cards
+            </span>
           </div>
-
-          <div className="flex shrink-0 items-center gap-4 rounded-xl border border-border bg-surface-2 px-4 py-3">
-            <ProgressRing
-              value={overall.percent}
-              size={54}
-              strokeWidth={4}
-              showValue
-              label={`${handbook.name} mastery`}
-            />
-            <div className="space-y-0.5 text-xs">
-              <div className="font-medium text-foreground">
-                {overall.known} / {overall.total} known
-              </div>
-              <div className="text-muted-foreground">
-                {overall.revisit} revisit · {overall.untouched} untouched
-              </div>
-            </div>
-          </div>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            {handbook.name} Interview Handbook
+          </h1>
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+            {handbook.tagline}
+          </p>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-2.5">
+        <div className="mt-6 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground">
+              {overall.known} of {overall.total} cards mastered
+            </span>
+            <span className="font-mono text-text-faint tabular-nums">
+              {overall.percent}%
+              {overall.revisit > 0 ? ` · ${overall.revisit} to revisit` : ""}
+            </span>
+          </div>
+          <Progress value={overall.percent} className="h-1.5" />
+        </div>
+
+        <div className="mt-6 flex flex-wrap items-center gap-3">
           {lastCard ? (
             <Button asChild size="sm">
               <Link
                 to="/$hb/t/$cardId"
                 params={{ hb: handbook.id, cardId: lastCard.id }}
               >
-                <span>Resume: {lastCard.title}</span>
+                <span>Resume: {stripInlineCode(lastCard.title)}</span>
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </Button>
@@ -85,7 +72,7 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                   to="/$hb/t/$cardId"
                   params={{ hb: handbook.id, cardId: bundle.cards[0].id }}
                 >
-                  <span>Start reading</span>
+                  <span>Start studying</span>
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </Link>
               </Button>
@@ -95,30 +82,22 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
           <Button asChild variant="outline" size="sm">
             <Link to="/$hb/flashcards" params={{ hb: handbook.id }}>
               <Layers className="size-4" aria-hidden="true" />
-              <span>Flashcards</span>
-            </Link>
-          </Button>
-
-          <Button asChild variant="outline" size="sm">
-            <Link to="/$hb/revision" params={{ hb: handbook.id }}>
-              <Zap className="size-4" aria-hidden="true" />
-              <span>Quick Revision</span>
-            </Link>
-          </Button>
-
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/$hb/bookmarks" params={{ hb: handbook.id }}>
-              <Bookmark className="size-4" aria-hidden="true" />
-              <span>Bookmarks ({hbBookmarkCount})</span>
+              <span>Practice flashcards</span>
             </Link>
           </Button>
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-heading text-lg font-semibold tracking-tight">
-          Chapters
-        </h2>
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-heading text-lg font-semibold tracking-tight">
+            Chapters
+          </h2>
+          <span className="font-mono text-xs text-text-faint">
+            Pick a topic to browse cards
+          </span>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
           {handbook.chapters.map((chapter) => {
             const chapterCards = getCardsForChapter(bundle, chapter.slug)
@@ -130,8 +109,8 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                 params={{ hb: handbook.id, chapter: chapter.slug }}
                 className="group flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card) transition-all duration-(--duration-base) hover:border-[var(--accent-ring)] hover:shadow-(--shadow-card-hover)"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg" aria-hidden="true">
                         {chapter.emoji}
@@ -140,26 +119,24 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                         {chapter.title}
                       </h3>
                     </div>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      {chapter.description}
-                    </p>
+                    <ArrowRight
+                      className="size-4 text-text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand"
+                      aria-hidden="true"
+                    />
                   </div>
-                  <ProgressRing
-                    value={counts.percent}
-                    size={28}
-                    strokeWidth={3}
-                    label={`${chapter.title} completion`}
-                  />
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    {chapter.description}
+                  </p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between font-mono text-xs text-text-faint">
-                  <span>
-                    {counts.known}/{counts.total} known
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-muted-foreground group-hover:text-brand">
-                    Open chapter
-                    <ArrowRight className="size-3.5" aria-hidden="true" />
-                  </span>
+                <div className="mt-5 space-y-2">
+                  <div className="flex items-center justify-between font-mono text-[11px] text-text-faint tabular-nums">
+                    <span>
+                      {counts.total} {counts.total === 1 ? "card" : "cards"}
+                    </span>
+                    <span>{counts.known} known</span>
+                  </div>
+                  <Progress value={counts.percent} className="h-1" />
                 </div>
               </Link>
             )

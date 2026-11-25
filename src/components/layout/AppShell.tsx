@@ -8,7 +8,7 @@ import { TopBar } from "@/components/layout/TopBar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { appHotkeys } from "@/lib/keyboard"
 import type { HandbookBundle } from "@/lib/types"
-import { applyHandbookAccent, resetHandbookAccent } from "@/lib/utils"
+import { applyHandbookAccent, cn, resetHandbookAccent } from "@/lib/utils"
 
 interface AppShellProps {
   bundle: HandbookBundle
@@ -95,9 +95,14 @@ export function AppShell({ bundle, children }: AppShellProps) {
           sectionLabel={sectionLabel}
         />
 
-        <div className="mx-auto flex w-full max-w-[1280px] flex-1 gap-8 px-4 pt-6 pb-24 sm:px-6 sm:pb-10 lg:px-8">
+        <div
+          className={cn(
+            "mx-auto flex w-full flex-1 justify-center gap-10 px-4 pt-6 pb-24 sm:px-8 sm:pt-8 sm:pb-12",
+            activeCard ? "max-w-[1040px]" : "max-w-4xl"
+          )}
+        >
           <div className="min-w-0 flex-1">{children}</div>
-          <TocPanel bundle={bundle} activeCard={activeCard} />
+          <TocPanel activeCard={activeCard} />
         </div>
       </SidebarInset>
 

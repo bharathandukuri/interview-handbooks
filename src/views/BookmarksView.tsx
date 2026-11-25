@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Bookmark } from "lucide-react"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
+import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import type { HandbookBundle } from "@/lib/types"
 import { useProgressStore } from "@/store/useProgressStore"
 
@@ -54,7 +55,7 @@ export function BookmarksView({ bundle }: BookmarksViewProps) {
                   </span>
                 </div>
                 <div className="font-heading text-base font-semibold group-hover:text-brand">
-                  {card.title}
+                  <InlineCodeTitle text={card.title} />
                 </div>
               </div>
               <ArrowRight

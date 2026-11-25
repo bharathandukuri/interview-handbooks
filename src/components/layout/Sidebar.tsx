@@ -3,21 +3,17 @@ import {
   ArrowLeftRight,
   BarChart3,
   Bookmark,
-  Check,
   ChevronRight,
   Home,
   Layers,
   Palette,
-  RotateCcw,
   Zap,
 } from "lucide-react"
-import { ProgressRing } from "@/components/features/ProgressRing"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +35,7 @@ import {
 import { getHandbooksMeta } from "@/lib/content"
 import { getCardsForChapter, getProgressCounts } from "@/lib/selectors"
 import type { HandbookBundle } from "@/lib/types"
+import { stripInlineCode } from "@/lib/text"
 import { cn } from "@/lib/utils"
 import { useProgressStore } from "@/store/useProgressStore"
 import { useSettingsStore } from "@/store/useSettingsStore"
@@ -133,13 +130,12 @@ export function HandbookSidebar({
                 >
                   {handbook.name.slice(0, 2).toUpperCase()}
                 </div>
-                <div className="grid flex-1 text-left leading-tight">
+                <div className="grid min-w-0 flex-1 text-left leading-tight">
                   <span className="truncate font-heading text-sm font-semibold text-foreground">
                     {handbook.name}
                   </span>
                   <span className="truncate font-mono text-[11px] text-muted-foreground">
-                    {overallCounts.known}/{overallCounts.total} known ·{" "}
-                    {handbook.chapterCount} ch
+                    {overallCounts.known}/{overallCounts.total} known
                   </span>
                 </div>
               </Link>
@@ -148,69 +144,103 @@ export function HandbookSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="overflow-hidden">
-        <ScrollArea className="h-full">
-          <SidebarGroup>
-            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {navItems.map((item) => {
-                  const Icon = item.icon
+      <SidebarContent className="overflow-x-hidden overflow-y-auto">
+        <SidebarGroup>
+          <SidebarGroupLabel>Study</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <SidebarMenuItem key={item.to}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.isActive}
+                      tooltip={item.label}
+                    >
+                      <Link
+                        to={item.to}
+                        params={{ hb: handbook.id }}
+                        onClick={closeMobileIfNeeded}
+                      >
+                        <Icon
+                          className={cn(
+                            item.isActive
+                              ? "text-brand"
+                              : "text-muted-foreground"
+                          )}
+                          aria-hidden="true"
+                        />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Chapters</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              {handbook.chapters.map((ch) => {
+                const cards = getCardsForChapter(bundle, ch.slug)
+                const counts = getProgressCounts(cards, statusMap)
+                const chapterKey = `${handbook.id}.${ch.slug}`
+                const isCollapsed = collapsedChapters[chapterKey] ?? false
+                const isCurrentChapter = activeChapterSlug === ch.slug
+
+                if (isIconCollapsed) {
                   return (
-                    <SidebarMenuItem key={item.to}>
+                    <SidebarMenuItem key={ch.slug}>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.label}
+                        isActive={isCurrentChapter}
+                        tooltip={`${ch.emoji} ${ch.title} (${counts.known}/${counts.total})`}
                       >
                         <Link
-                          to={item.to}
-                          params={{ hb: handbook.id }}
+                          to="/$hb/c/$chapter"
+                          params={{ hb: handbook.id, chapter: ch.slug }}
                           onClick={closeMobileIfNeeded}
                         >
-                          <Icon
-                            className={cn(
-                              item.isActive
-                                ? "text-brand"
-                                : "text-muted-foreground"
-                            )}
+                          <span
+                            className="flex size-4 shrink-0 items-center justify-center text-sm leading-none"
                             aria-hidden="true"
-                          />
-                          <span>{item.label}</span>
+                          >
+                            {ch.emoji}
+                          </span>
+                          <span>{ch.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                }
 
-          <SidebarSeparator />
-
-          <SidebarGroup>
-            <SidebarGroupLabel>Chapters</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu className="gap-1">
-                {handbook.chapters.map((ch) => {
-                  const cards = getCardsForChapter(bundle, ch.slug)
-                  const counts = getProgressCounts(cards, statusMap)
-                  const chapterKey = `${handbook.id}.${ch.slug}`
-                  const isCollapsed = collapsedChapters[chapterKey] ?? false
-                  const isCurrentChapter = activeChapterSlug === ch.slug
-
-                  if (isIconCollapsed) {
-                    return (
-                      <SidebarMenuItem key={ch.slug}>
+                return (
+                  <Collapsible
+                    key={ch.slug}
+                    open={!isCollapsed}
+                    onOpenChange={(open) =>
+                      setChapterCollapsed(chapterKey, !open)
+                    }
+                    className="group/collapsible min-w-0"
+                  >
+                    <SidebarMenuItem className="min-w-0">
+                      <div className="flex min-w-0 items-center gap-1">
                         <SidebarMenuButton
                           asChild
-                          isActive={isCurrentChapter}
-                          tooltip={`${ch.emoji} ${ch.title} (${counts.known}/${counts.total})`}
+                          isActive={isCurrentChapter && !activeCardId}
+                          className="min-w-0 flex-1"
                         >
                           <Link
                             to="/$hb/c/$chapter"
                             params={{ hb: handbook.id, chapter: ch.slug }}
                             onClick={closeMobileIfNeeded}
+                            className="min-w-0"
                           >
                             <span
                               className="flex size-4 shrink-0 items-center justify-center text-sm leading-none"
@@ -218,121 +248,88 @@ export function HandbookSidebar({
                             >
                               {ch.emoji}
                             </span>
-                            <span>{ch.title}</span>
+                            <span className="min-w-0 flex-1 truncate">
+                              {ch.title}
+                            </span>
                           </Link>
                         </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )
-                  }
 
-                  return (
-                    <Collapsible
-                      key={ch.slug}
-                      open={!isCollapsed}
-                      onOpenChange={(open) =>
-                        setChapterCollapsed(chapterKey, !open)
-                      }
-                      className="group/collapsible"
-                    >
-                      <SidebarMenuItem>
-                        <div className="flex items-center gap-0.5">
-                          <SidebarMenuButton
-                            asChild
-                            isActive={isCurrentChapter && !activeCardId}
-                            className="flex-1 pr-1"
+                        <CollapsibleTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={`${isCollapsed ? "Expand" : "Collapse"} ${ch.title}`}
+                            className="inline-flex h-7 shrink-0 items-center gap-1 rounded-md px-1.5 font-mono text-[11px] text-text-faint tabular-nums transition-colors hover:bg-sidebar-accent hover:text-foreground"
                           >
-                            <Link
-                              to="/$hb/c/$chapter"
-                              params={{ hb: handbook.id, chapter: ch.slug }}
-                              onClick={closeMobileIfNeeded}
-                            >
-                              <span
-                                className="flex size-4 shrink-0 items-center justify-center text-sm leading-none"
-                                aria-hidden="true"
+                            <span>
+                              {counts.known}/{counts.total}
+                            </span>
+                            <ChevronRight
+                              className="size-3.5 transition-transform duration-(--duration-fast) group-data-[state=open]/collapsible:rotate-90"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </CollapsibleTrigger>
+                      </div>
+
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="mr-0 pr-0">
+                          {cards.map((card) => {
+                            const cardStatus = statusMap[card.id]
+                            const isCurrentCard = activeCardId === card.id
+
+                            return (
+                              <SidebarMenuSubItem
+                                key={card.id}
+                                className="min-w-0"
                               >
-                                {ch.emoji}
-                              </span>
-                              <span className="flex-1 truncate">
-                                {ch.title}
-                              </span>
-                            </Link>
-                          </SidebarMenuButton>
-
-                          <CollapsibleTrigger asChild>
-                            <button
-                              type="button"
-                              aria-label={`${isCollapsed ? "Expand" : "Collapse"} ${ch.title}`}
-                              className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-                            >
-                              <ProgressRing
-                                value={counts.percent}
-                                size={16}
-                                strokeWidth={2}
-                                label={`${ch.title} progress`}
-                              />
-                              <ChevronRight
-                                className="size-3.5 transition-transform duration-(--duration-fast) group-data-[state=open]/collapsible:rotate-90"
-                                aria-hidden="true"
-                              />
-                            </button>
-                          </CollapsibleTrigger>
-                        </div>
-
-                        <CollapsibleContent>
-                          <SidebarMenuSub>
-                            {cards.map((card) => {
-                              const cardStatus = statusMap[card.id]
-                              const isCurrentCard = activeCardId === card.id
-
-                              return (
-                                <SidebarMenuSubItem key={card.id}>
-                                  <SidebarMenuSubButton
-                                    asChild
-                                    size="sm"
-                                    isActive={isCurrentCard}
+                                <SidebarMenuSubButton
+                                  asChild
+                                  size="sm"
+                                  isActive={isCurrentCard}
+                                  className="min-w-0"
+                                >
+                                  <Link
+                                    to="/$hb/t/$cardId"
+                                    params={{
+                                      hb: handbook.id,
+                                      cardId: card.id,
+                                    }}
+                                    onClick={closeMobileIfNeeded}
+                                    className={cn(
+                                      "flex w-full min-w-0 items-center gap-2",
+                                      isCurrentCard && "font-medium text-brand"
+                                    )}
                                   >
-                                    <Link
-                                      to="/$hb/t/$cardId"
-                                      params={{
-                                        hb: handbook.id,
-                                        cardId: card.id,
-                                      }}
-                                      onClick={closeMobileIfNeeded}
+                                    <span
                                       className={cn(
-                                        isCurrentCard &&
-                                          "font-medium text-brand"
+                                        "size-1.5 shrink-0 rounded-full",
+                                        cardStatus === "known"
+                                          ? "bg-[var(--easy)]"
+                                          : cardStatus === "revisit"
+                                            ? "bg-[var(--medium)]"
+                                            : isCurrentCard
+                                              ? "bg-brand"
+                                              : "bg-border"
                                       )}
-                                    >
-                                      <span className="flex-1 truncate">
-                                        {card.title}
-                                      </span>
-                                      {cardStatus === "known" && (
-                                        <Check
-                                          className="size-3 shrink-0 text-[var(--easy)]"
-                                          aria-label="Known"
-                                        />
-                                      )}
-                                      {cardStatus === "revisit" && (
-                                        <RotateCcw
-                                          className="size-3 shrink-0 text-[var(--medium)]"
-                                          aria-label="Revisit"
-                                        />
-                                      )}
-                                    </Link>
-                                  </SidebarMenuSubButton>
-                                </SidebarMenuSubItem>
-                              )
-                            })}
-                          </SidebarMenuSub>
-                        </CollapsibleContent>
-                      </SidebarMenuItem>
-                    </Collapsible>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </ScrollArea>
+                                      aria-hidden="true"
+                                    />
+                                    <span className="min-w-0 flex-1 truncate">
+                                      {stripInlineCode(card.title)}
+                                    </span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            )
+                          })}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       {(allHandbooks.length > 1 || import.meta.env.DEV) && (
@@ -359,7 +356,7 @@ export function HandbookSidebar({
                       className="text-muted-foreground"
                       aria-hidden="true"
                     />
-                    <span>UI Kit (/_kit)</span>
+                    <span>UI Kit</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -17,6 +17,7 @@ import { Kbd } from "@/components/ui/kbd"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { appHotkeys } from "@/lib/keyboard"
+import { stripInlineCode } from "@/lib/text"
 import type { Card, ChapterMeta, HandbookBundle } from "@/lib/types"
 
 interface TopBarProps {
@@ -118,7 +119,7 @@ export function TopBar({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem className="min-w-0">
                   <BreadcrumbPage className="max-w-[145px] truncate font-medium sm:max-w-[260px] lg:max-w-[360px]">
-                    {activeCard.title}
+                    {stripInlineCode(activeCard.title)}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </Fragment>
