@@ -95,3 +95,14 @@
   background-color: var(--surface-2);
   font-weight: 600;
 }
+
+/* Shiki dual-theme CSS variable activation */
+html.dark .shiki,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
+}
+
+html.light .shiki,
+html.light .shiki span {
+  color: var(--shiki-light) !important;
+}

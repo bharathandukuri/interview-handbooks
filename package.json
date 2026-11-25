@@ -40,7 +40,6 @@
     "@eslint/js": "^10",
     "@playwright/test": "^1.65.1",
     "@tanstack/router-plugin": "^1.169.0",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",

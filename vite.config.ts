@@ -4,6 +4,7 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { viteSingleFile } from "vite-plugin-singlefile"
+import { handbookContentPlugin } from "./plugins/handbook-content.ts"
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -12,6 +13,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      handbookContentPlugin({
+        singleHandbook,
+      }),
       tanstackRouter({
         target: "react",
         autoCodeSplitting: !isSingle,

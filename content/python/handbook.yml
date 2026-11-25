@@ -1,0 +1,10 @@
+id: python
+name: Python
+tagline: Crack the Python interview, one card at a time
+icon: python
+accent: "#4A90E2"
+accent2: "#FFD43B"
+version: 1
+chapters:
+  - 01-basics
+  - 02-functions
