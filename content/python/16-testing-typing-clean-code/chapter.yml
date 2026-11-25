@@ -1,0 +1,3 @@
+title: Testing, Typing, and Clean Code
+icon: code
+description: Add static type hints with modern Python 3.12+ syntax, write isolated tests with unittest and pytest, profile and log cleanly, and avoid critical security pitfalls.

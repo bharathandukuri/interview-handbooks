@@ -36,18 +36,18 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 ## Part 4: Going deeper
 
-| #   | Chapter                           | What it covers                                           | Practice problems (examples)      | Status  |
-| --- | --------------------------------- | -------------------------------------------------------- | --------------------------------- | ------- |
-| 13  | Iterators, Generators, Decorators | Iteration, yield, closures, decorators, context managers | Number generator, timer decorator | NEXT    |
-| 14  | How Python Works Inside           | Names and objects, is vs ==, copying, memory, GIL        | Spot the bug, alias or copy       | PLANNED |
-| 15  | Concurrency                       | Threads, processes, asyncio, which one to pick           | Parallel downloads (simulated)    | PLANNED |
-| 16  | Testing, Typing, Clean Code       | pytest, type hints, debugging, PEP 8                     | Write tests for your own function | PLANNED |
+| #   | Chapter                           | What it covers                                           | Practice problems (examples)      | Status |
+| --- | --------------------------------- | -------------------------------------------------------- | --------------------------------- | ------ |
+| 13  | Iterators, Generators, Decorators | Iteration, yield, closures, decorators, context managers | Number generator, timer decorator | DONE   |
+| 14  | How Python Works Inside           | Names and objects, is vs ==, copying, memory, GIL        | Spot the bug, alias or copy       | DONE   |
+| 15  | Concurrency                       | Threads, processes, asyncio, which one to pick           | Parallel downloads (simulated)    | DONE   |
+| 16  | Testing, Typing, Clean Code       | pytest, type hints, debugging, PEP 8                     | Write tests for your own function | DONE   |
 
 ## Part 5: Interview preparation
 
-| #   | Chapter               | What it covers                                                                         | Status  |
-| --- | --------------------- | -------------------------------------------------------------------------------------- | ------- |
-| 17  | Interview Problem Set | Hash map, two pointers, sliding window, stack, binary search, BFS/DFS, heap, LRU, trie | PLANNED |
+| #   | Chapter               | What it covers                                                                         | Status |
+| --- | --------------------- | -------------------------------------------------------------------------------------- | ------ |
+| 17  | Interview Problem Set | Hash map, two pointers, sliding window, stack, binary search, BFS/DFS, heap, LRU, trie | NEXT   |
 
 ## Writing rules used for every card
 

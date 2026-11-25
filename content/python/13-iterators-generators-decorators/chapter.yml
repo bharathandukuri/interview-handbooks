@@ -1,0 +1,3 @@
+title: Iterators, Generators, and Decorators
+icon: git-branch
+description: Understand Python's iteration protocol, write memory-efficient generators with yield, build closures and decorators with functools.wraps, and craft custom context managers.

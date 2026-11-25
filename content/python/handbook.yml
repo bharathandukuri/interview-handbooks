@@ -18,3 +18,7 @@ chapters:
   - 10-errors-and-files
   - 11-modules-and-stdlib
   - 12-oop
+  - 13-iterators-generators-decorators
+  - 14-how-python-works-inside
+  - 15-concurrency
+  - 16-testing-typing-clean-code

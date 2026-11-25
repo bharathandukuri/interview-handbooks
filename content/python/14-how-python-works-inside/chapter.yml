@@ -1,0 +1,3 @@
+title: How Python Works Inside
+icon: cpu
+description: Peek under CPython's hood — names and object identity, interning, shallow vs deep copying, reference counting and cyclic GC, __slots__, bytecode, dict hash tables, descriptors, and the GIL.

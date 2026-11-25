@@ -1,0 +1,3 @@
+title: Concurrency
+icon: workflow
+description: Distinguish concurrency from parallelism, master threading with locks and queues, multiprocessing with spawn safety, concurrent.futures executors, and structured asyncio.
