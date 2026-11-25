@@ -3,6 +3,9 @@ type: concept
 title: "What is Python? Execution, REPL, and basic I/O"
 difficulty: easy
 tags: [basics, execution, repl]
+revision:
+  - "CPython compiles `.py` source into bytecode (`.pyc`) and runs it on the Python Virtual Machine"
+  - 'Use 4-space indentation for blocks and `if __name__ == "__main__":` for script entry points'
 ---
 
 Python is a high-level, dynamically typed language. When you run a `.py` file, CPython compiles your source into **bytecode** (`.pyc`) and executes it on the **Python Virtual Machine (PVM)**.

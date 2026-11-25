@@ -1,0 +1,3 @@
+title: CPython Internals & Metaprogramming
+icon: cpu
+description: Bytecode, descriptors, metaclasses, GIL, refcounting, GC, and dict internals.

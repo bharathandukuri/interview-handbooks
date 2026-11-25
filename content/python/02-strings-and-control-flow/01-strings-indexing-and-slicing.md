@@ -3,6 +3,9 @@ type: concept
 title: "Strings, indexing, slicing, and raw strings"
 difficulty: easy
 tags: [strings, slicing, basics]
+revision:
+  - "Strings are immutable Unicode sequences; `s[start:stop:step]` slices safely without IndexError"
+  - 'Use `s[::-1]` to reverse and `r"..."` raw strings for regexes/paths'
 ---
 
 Strings (`str`) are **immutable sequences of Unicode characters**. Because they are immutable, operations return new strings rather than modifying in place.

@@ -13,3 +13,8 @@ chapters:
   - 05-files-errors-modules
   - 06-oop
   - 07-iterators-generators
+  - 08-typing-modern
+  - 09-internals
+  - 10-concurrency
+  - 11-testing-and-craft
+  - 12-coding

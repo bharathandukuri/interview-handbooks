@@ -105,6 +105,7 @@ describe("cardFilterSearchSchema", () => {
   it("validates query params and normalizes mostAsked=1", () => {
     const parsed = cardFilterSearchSchema.parse({
       difficulty: "hard",
+      type: "question",
       tag: "memory",
       status: "revisit",
       mostAsked: 1,
@@ -112,6 +113,7 @@ describe("cardFilterSearchSchema", () => {
     })
     expect(parsed).toEqual({
       difficulty: "hard",
+      type: "question",
       tag: "memory",
       status: "revisit",
       mostAsked: true,
@@ -122,12 +124,14 @@ describe("cardFilterSearchSchema", () => {
   it("drops invalid filter values cleanly via catch", () => {
     const parsed = cardFilterSearchSchema.parse({
       difficulty: "impossible",
+      type: "unknown-type",
       status: "bogus",
       mostAsked: "0",
       sort: "random",
     })
     expect(parsed).toEqual({
       difficulty: undefined,
+      type: undefined,
       tag: undefined,
       status: undefined,
       mostAsked: undefined,

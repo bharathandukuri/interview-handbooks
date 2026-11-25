@@ -149,7 +149,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     // Open chapter with active filters and reset filters via Command Palette action
     await page.goto("/#/python/c/basics?mostAsked=1")
     await expect(
-      page.locator("main").getByText("3/5", { exact: true })
+      page.locator("main").getByText("3/10", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -166,7 +166,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await resetAction.click()
 
     await expect(
-      page.locator("main").getByText("5/5", { exact: true })
+      page.locator("main").getByText("10/10", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -224,8 +224,8 @@ test.describe("Interview Handbooks smoke flow", () => {
       page.getByRole("button", { name: /Reveal answer Space/i })
     ).toBeVisible()
 
-    // ArrowRight moves to Next card
-    await page.keyboard.press("ArrowRight")
+    // ArrowLeft moves to Previous card
+    await page.keyboard.press("ArrowLeft")
     await expect(
       page.getByRole("heading", {
         level: 1,
@@ -233,8 +233,8 @@ test.describe("Interview Handbooks smoke flow", () => {
       })
     ).toBeVisible()
 
-    // ArrowLeft returns to Previous card
-    await page.keyboard.press("ArrowLeft")
+    // ArrowRight returns to Next card
+    await page.keyboard.press("ArrowRight")
     await expect(
       page.getByRole("heading", {
         level: 1,
@@ -242,8 +242,8 @@ test.describe("Interview Handbooks smoke flow", () => {
       })
     ).toBeVisible()
 
-    // N moves to Next card and P returns to Previous card
-    await page.keyboard.press("n")
+    // P moves to Previous card and N returns to Next card
+    await page.keyboard.press("p")
     await expect(
       page.getByRole("heading", {
         level: 1,
@@ -251,7 +251,7 @@ test.describe("Interview Handbooks smoke flow", () => {
       })
     ).toBeVisible()
 
-    await page.keyboard.press("p")
+    await page.keyboard.press("n")
     await expect(
       page.getByRole("heading", {
         level: 1,
@@ -262,7 +262,10 @@ test.describe("Interview Handbooks smoke flow", () => {
     // B goes Back to the parent chapter
     await page.keyboard.press("b")
     await expect(
-      page.getByRole("heading", { level: 1, name: "Python Basics" })
+      page.getByRole("heading", {
+        level: 1,
+        name: "Python From Zero & Core Basics",
+      })
     ).toBeVisible()
   })
 
