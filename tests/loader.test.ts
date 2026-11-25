@@ -229,4 +229,21 @@ describe("loadAllHandbooks validation and warnings", () => {
     expect(cards[2]?.sections.solution).toContain("data-code-block")
     expect(cards[2]?.sections.walkthrough).toContain("Linear scan.")
   })
+
+  it("compiles fenced mermaid blocks to data-mermaid-diagram while preserving searchText", async () => {
+    const root = makeTempContent((dir) => {
+      writeFile(path.join(dir, "demo/handbook.yml"), baseHandbook)
+      writeFile(path.join(dir, "demo/01-intro/chapter.yml"), baseChapter)
+      writeFile(
+        path.join(dir, "demo/01-intro/01-diag.md"),
+        `---\ntype: concept\ntitle: Flow\ndifficulty: easy\ntags: [diagrams]\n---\n\nSee the flow:\n\n\`\`\`mermaid\nflowchart LR\n  Start --> Finish\n\`\`\`\n`
+      )
+    })
+
+    const data = await loadAllHandbooks(root)
+    const card = data.bundles.demo?.cards[0]
+    expect(card?.sections.body).toContain("data-mermaid-diagram")
+    expect(card?.sections.body).not.toContain("data-code-block")
+    expect(card?.searchText).toContain("Start --> Finish")
+  })
 })

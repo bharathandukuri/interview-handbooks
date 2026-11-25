@@ -1,5 +1,6 @@
 import { createElement, Fragment, useMemo, type ReactNode } from "react"
 import { CodeBlock } from "@/components/features/CodeBlock"
+import { MermaidDiagram } from "@/components/features/MermaidDiagram"
 import { Callout } from "@/components/ui/callout"
 import { Kbd } from "@/components/ui/kbd"
 import type { DirectiveVariant } from "@/lib/types"
@@ -65,6 +66,11 @@ function renderDomNode(
 
   const el = node as Element
   const tag = el.tagName.toLowerCase()
+
+  if (tag === "div" && el.hasAttribute("data-mermaid-diagram")) {
+    const code = el.getAttribute("data-code") ?? el.textContent ?? ""
+    return <MermaidDiagram key={key} code={code} />
+  }
 
   if (tag === "div" && el.hasAttribute("data-code-block")) {
     const lang = el.getAttribute("data-lang") ?? "text"

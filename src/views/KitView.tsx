@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { useCommandPalette } from "@/app/providers"
 import { CardRenderer } from "@/components/cards/CardRenderer"
 import { CodeBlock } from "@/components/features/CodeBlock"
+import { MermaidDiagram } from "@/components/features/MermaidDiagram"
 import { StatusToggle } from "@/components/features/StatusToggle"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
 import { Badge } from "@/components/ui/badge"
@@ -740,9 +741,17 @@ export function KitView() {
 
           <CodeBlock
             language="typescript"
-            title="CodeBlock with Output"
+            title="CodeBlock with Output & Line Numbers"
             html='<pre class="shiki shiki-themes github-dark github-light" style="--shiki-dark:#e1e4e8;--shiki-light:#24292e;--shiki-dark-bg:#24292e;--shiki-light-bg:#fff" tabindex="0"><code><span class="line"><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">const</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1"> sum</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49"> =</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> (</span><span style="--shiki-dark:#FFAB70;--shiki-light:#E36209">a</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> number</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">, </span><span style="--shiki-dark:#FFAB70;--shiki-light:#E36209">b</span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">:</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5"> number</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">) </span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">=&gt;</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> a </span><span style="--shiki-dark:#F97583;--shiki-light:#D73A49">+</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E"> b;</span></span>&#10;<span class="line"><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">console.</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1">log</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">(</span><span style="--shiki-dark:#B392F0;--shiki-light:#6F42C1">sum</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">(</span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">2</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">, </span><span style="--shiki-dark:#79B8FF;--shiki-light:#005CC5">3</span><span style="--shiki-dark:#E1E4E8;--shiki-light:#24292E">));</span></span></code></pre>'
             outputHtml="<pre><code>5</code></pre>"
+          />
+
+          <MermaidDiagram
+            title="Theme-Synced Mermaid Diagram"
+            code={`flowchart LR
+  A["Markdown \`\`\`mermaid"] --> B["Vite Content Plugin"]
+  B --> C["RichContent Hydrator"]
+  C --> D["Mermaid SVG (Theme + Accent)"]`}
           />
         </section>
 
@@ -781,10 +790,14 @@ export function KitView() {
                 }
                 diagramSlot={
                   card.type === "concept" ? (
-                    <div className="flex items-center justify-between gap-2 font-mono text-xs text-muted-foreground">
-                      <span>[ left ] ─── window ───▶ [ right ]</span>
-                      <span className="text-brand">O(n) invariant</span>
-                    </div>
+                    <MermaidDiagram
+                      title="Sliding Window Flow"
+                      className="my-0"
+                      code={`flowchart LR
+  L["left pointer"] --> W["Valid window?"]
+  W -->|Yes| R["Expand right"]
+  W -->|No| S["Shrink left"]`}
+                    />
                   ) : undefined
                 }
               />

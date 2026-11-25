@@ -15,6 +15,7 @@ export interface CodeBlockProps {
   outputHtml?: string
   title?: string
   tone?: "default" | "trap" | "fix"
+  showLineNumbers?: boolean
   footerSlot?: ReactNode
   className?: string
 }
@@ -26,6 +27,7 @@ export function CodeBlock({
   outputHtml,
   title,
   tone = "default",
+  showLineNumbers = true,
   footerSlot,
   className,
 }: CodeBlockProps) {
@@ -79,6 +81,7 @@ export function CodeBlock({
     <div
       data-slot="code-block"
       data-tone={tone}
+      data-line-numbers={showLineNumbers ? "true" : "false"}
       className={cn(
         "my-3 overflow-hidden rounded-xl border",
         toneContainerClass,

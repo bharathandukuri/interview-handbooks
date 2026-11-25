@@ -13,14 +13,7 @@ export function ConceptCard({
 }: ConceptCardProps) {
   return (
     <CardShell {...shellProps} card={card}>
-      {diagramSlot && (
-        <div
-          data-slot="concept-diagram"
-          className="rounded-xl border border-border bg-surface-2 p-4"
-        >
-          {diagramSlot}
-        </div>
-      )}
+      {diagramSlot && <div data-slot="concept-diagram">{diagramSlot}</div>}
       <div id="section-body">
         <RichContent html={card.sections.body ?? ""} />
       </div>

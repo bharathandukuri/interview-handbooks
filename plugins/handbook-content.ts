@@ -138,7 +138,11 @@ function transformDirectivesAndValidateCode(
   const allowedSet = new Set<string>(ALLOWED_DIRECTIVES)
 
   const visit = (node: MdastNode): void => {
-    if (node.type === "code" && typeof node.value === "string") {
+    if (
+      node.type === "code" &&
+      typeof node.value === "string" &&
+      node.lang !== "mermaid"
+    ) {
       const lineCount = node.value.split(/\r?\n/).length
       if (lineCount > 20) {
         warnings.push({
@@ -233,8 +237,21 @@ function rehypeShikiBlocks(highlighter: Highlighter) {
           const rawLang = langClass
             ? langClass.slice("language-".length)
             : "text"
-          const safeLang = loadedLangs.has(rawLang) ? rawLang : "text"
           const rawCode = getHastText(codeNode).replace(/\n$/, "")
+
+          if (rawLang === "mermaid") {
+            return {
+              type: "element",
+              tagName: "div",
+              properties: {
+                "data-mermaid-diagram": "",
+                "data-code": rawCode,
+              },
+              children: [{ type: "text", value: rawCode }],
+            }
+          }
+
+          const safeLang = loadedLangs.has(rawLang) ? rawLang : "text"
           const lineCount =
             rawCode.length === 0 ? 0 : rawCode.split(/\r?\n/).length
 
