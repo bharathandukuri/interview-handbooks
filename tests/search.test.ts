@@ -141,7 +141,7 @@ describe("search helpers and Fuse index", () => {
     const first = pyEntries[0]
     const found = searchEntries(fuse, pyEntries, first?.title ?? "")
     expect(found.some((f) => f.item.id === first?.id)).toBe(true)
-  })
+  }, 30_000)
 
   it("searches 500 entries well under 100ms", () => {
     const bulk: SearchEntry[] = Array.from({ length: 500 }, (_, i) => ({

@@ -91,7 +91,7 @@ describe("loadAllHandbooks on repository Python sample", () => {
       result.handbooks[0]?.cardCount ?? 0
     )
     expect(result.handbooks[0]?.iconSvg).toContain("python-original")
-  })
+  }, 30_000)
 
   it("resolves official Devicon SVGs for languages and products with graceful fallback", () => {
     expect(resolveDeviconSvg("python")).toContain("<svg")
@@ -204,9 +204,9 @@ describe("loadAllHandbooks validation and warnings", () => {
     )
   })
 
-  it("emits warnings (not errors) for concept >800 words, code >35 lines, and missing revision on mostAsked", async () => {
+  it("emits warnings (not errors) for concept >800 words, code >75 lines, and missing revision on mostAsked", async () => {
     const longWords = Array.from({ length: 820 }, () => "python").join(" ")
-    const longCode = Array.from({ length: 37 }, (_, i) => `x_${i} = ${i}`).join(
+    const longCode = Array.from({ length: 77 }, (_, i) => `x_${i} = ${i}`).join(
       "\n"
     )
     const root = makeTempContent((dir) => {

@@ -1,0 +1,3 @@
+title: Modules and Standard Library
+icon: terminal
+description: Structure projects with modules, packages, and venv/uv, and master Python's standard library (collections, itertools, functools, datetime, secrets, math, and re).

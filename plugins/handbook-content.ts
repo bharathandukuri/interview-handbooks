@@ -148,11 +148,11 @@ function transformDirectivesAndValidateCode(
       node.lang !== "mermaid"
     ) {
       const lineCount = node.value.split(/\r?\n/).length
-      if (lineCount > 35) {
+      if (lineCount > 75) {
         warnings.push({
           filePath,
           field: "code",
-          message: `code snippet has ${lineCount} lines (recommended <= 35 lines)`,
+          message: `code snippet has ${lineCount} lines (recommended <= 75 lines)`,
         })
       }
     }

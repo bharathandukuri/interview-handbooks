@@ -14,3 +14,7 @@ chapters:
   - 06-lists-and-tuples
   - 07-dictionaries-and-sets
   - 08-comprehensions-and-sorting
+  - 09-functions
+  - 10-errors-and-files
+  - 11-modules-and-stdlib
+  - 12-oop

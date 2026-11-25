@@ -27,18 +27,18 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 ## Part 3: Writing real programs
 
-| #   | Chapter                      | What it covers                                                        | Practice problems (examples)              | Status  |
-| --- | ---------------------------- | --------------------------------------------------------------------- | ----------------------------------------- | ------- |
-| 09  | Functions                    | def, return, arguments, defaults, \*args/\*\*kwargs, scope, recursion | Factorial, Fibonacci, safe divide         | NEXT    |
-| 10  | Errors and Files             | try/except, raise, reading and writing files, with, JSON              | Count words in a file, safe number reader | PLANNED |
-| 11  | Modules and Standard Library | import, collections, itertools, datetime, random, pip and venv        | Most common word, days until a date       | PLANNED |
-| 12  | Object-Oriented Python       | Classes, self, methods, inheritance, dunder methods, dataclass        | Bank account, Stack class, Money class    | PLANNED |
+| #   | Chapter                      | What it covers                                                        | Practice problems (examples)              | Status |
+| --- | ---------------------------- | --------------------------------------------------------------------- | ----------------------------------------- | ------ |
+| 09  | Functions                    | def, return, arguments, defaults, \*args/\*\*kwargs, scope, recursion | Factorial, Fibonacci, safe divide         | DONE   |
+| 10  | Errors and Files             | try/except, raise, reading and writing files, with, JSON              | Count words in a file, safe number reader | DONE   |
+| 11  | Modules and Standard Library | import, collections, itertools, datetime, random, pip and venv        | Most common word, days until a date       | DONE   |
+| 12  | Object-Oriented Python       | Classes, self, methods, inheritance, dunder methods, dataclass        | Bank account, Stack class, Money class    | DONE   |
 
 ## Part 4: Going deeper
 
 | #   | Chapter                           | What it covers                                           | Practice problems (examples)      | Status  |
 | --- | --------------------------------- | -------------------------------------------------------- | --------------------------------- | ------- |
-| 13  | Iterators, Generators, Decorators | Iteration, yield, closures, decorators, context managers | Number generator, timer decorator | PLANNED |
+| 13  | Iterators, Generators, Decorators | Iteration, yield, closures, decorators, context managers | Number generator, timer decorator | NEXT    |
 | 14  | How Python Works Inside           | Names and objects, is vs ==, copying, memory, GIL        | Spot the bug, alias or copy       | PLANNED |
 | 15  | Concurrency                       | Threads, processes, asyncio, which one to pick           | Parallel downloads (simulated)    | PLANNED |
 | 16  | Testing, Typing, Clean Code       | pytest, type hints, debugging, PEP 8                     | Write tests for your own function | PLANNED |
