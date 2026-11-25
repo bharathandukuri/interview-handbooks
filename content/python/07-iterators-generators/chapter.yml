@@ -1,0 +1,3 @@
+title: Iterators, Generators & Functional Tools
+icon: sparkles
+description: Iteration protocol, yield, lazy pipelines, itertools, and functools.

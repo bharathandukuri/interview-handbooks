@@ -10,3 +10,6 @@ chapters:
   - 02-strings-and-control-flow
   - 03-data-structures
   - 04-functions
+  - 05-files-errors-modules
+  - 06-oop
+  - 07-iterators-generators
