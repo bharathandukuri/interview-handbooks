@@ -1,24 +1,23 @@
 import { useEffect, useMemo, useState } from "react"
 import { useFormatForDisplay } from "@tanstack/react-hotkeys"
-import { useNavigate, useParams } from "@tanstack/react-router"
-import Fuse from "fuse.js"
+import { useNavigate, useParams, useRouterState } from "@tanstack/react-router"
 import {
-  AlertTriangle,
   BarChart3,
   Bookmark,
   BookOpen,
-  Code2,
-  Columns2,
-  Eye,
-  HelpCircle,
   Home,
   Layers,
-  Lightbulb,
   Palette,
+  RotateCcw,
   SunMoon,
   Zap,
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
+import { HighlightedText } from "@/components/features/HighlightedText"
+import {
+  SearchResults,
+  type SearchCardEntry,
+} from "@/components/features/SearchResults"
 import {
   Command,
   CommandDialog,
@@ -33,8 +32,12 @@ import {
 import { Kbd } from "@/components/ui/kbd"
 import { getHandbooksMeta, loadHandbookSearch } from "@/lib/content"
 import { appHotkeys } from "@/lib/keyboard"
-import { stripInlineCode } from "@/lib/text"
-import type { CardType, SearchEntry } from "@/lib/types"
+import {
+  createSearchIndex,
+  highlightSubstring,
+  searchChapters,
+  searchEntries,
+} from "@/lib/search"
 import { useSettingsStore } from "@/store/useSettingsStore"
 
 interface CommandPaletteProps {
@@ -42,26 +45,18 @@ interface CommandPaletteProps {
   onOpenChange: (open: boolean) => void
 }
 
-type SearchEntryWithHandbook = SearchEntry & {
-  handbookId: string
-  handbookName: string
-}
-
-const CARD_TYPE_ICONS: Record<CardType, typeof HelpCircle> = {
-  question: HelpCircle,
-  concept: Lightbulb,
-  predict: Eye,
-  compare: Columns2,
-  pitfall: AlertTriangle,
-  problem: Code2,
-}
-
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const [query, setQuery] = useState("")
-  const [entries, setEntries] = useState<SearchEntryWithHandbook[]>([])
+  const [entries, setEntries] = useState<SearchCardEntry[]>([])
   const [loaded, setLoaded] = useState(false)
   const navigate = useNavigate()
   const params = useParams({ strict: false }) as { hb?: string }
+  const location = useRouterState({
+    select: (s) => ({
+      pathname: s.location.pathname,
+      searchStr: s.location.searchStr,
+    }),
+  })
   const toggleTheme = useSettingsStore((s) => s.toggleTheme)
   const formatForDisplay = useFormatForDisplay()
   const handbooks = useMemo(() => getHandbooksMeta(), [])
@@ -96,46 +91,49 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     }
   }, [open, loaded, handbooks])
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(entries, {
-        keys: [
-          { name: "title", weight: 0.5 },
-          { name: "tags", weight: 0.2 },
-          { name: "searchText", weight: 0.2 },
-          { name: "chapterTitle", weight: 0.1 },
-        ],
-        threshold: 0.35,
-        ignoreLocation: true,
-      }),
-    [entries]
+  const orderedEntries = useMemo(() => {
+    if (!activeHbId) return entries
+    return [...entries].sort((a, b) => {
+      if (a.handbookId === activeHbId && b.handbookId !== activeHbId) return -1
+      if (a.handbookId !== activeHbId && b.handbookId === activeHbId) return 1
+      return 0
+    })
+  }, [entries, activeHbId])
+
+  const { fuse } = useMemo(
+    () => createSearchIndex(orderedEntries),
+    [orderedEntries]
   )
 
-  const trimmed = query.trim()
-  const matchedCards = useMemo(() => {
-    if (!trimmed) return entries.slice(0, 8)
-    return fuse
-      .search(trimmed)
-      .slice(0, 12)
-      .map((r) => r.item)
-  }, [trimmed, entries, fuse])
+  const matchedCards = useMemo(
+    () => searchEntries(fuse, orderedEntries, query, 12),
+    [fuse, orderedEntries, query]
+  )
 
-  const matchedChapters = useMemo(() => {
-    const allChapters = handbooks.flatMap((hb) =>
-      hb.chapters.map((ch) => ({
-        handbookId: hb.id,
-        handbookName: hb.name,
-        ...ch,
-      }))
+  const allChapters = useMemo(
+    () =>
+      handbooks.flatMap((hb) =>
+        hb.chapters.map((ch) => ({
+          handbookId: hb.id,
+          handbookName: hb.name,
+          ...ch,
+        }))
+      ),
+    [handbooks]
+  )
+
+  const matchedChapters = useMemo(
+    () => searchChapters(allChapters, query),
+    [allChapters, query]
+  )
+
+  const hasActiveSearch =
+    Boolean(location.searchStr && location.searchStr.length > 1) ||
+    Boolean(
+      activeHbId &&
+      (location.pathname.startsWith(`/${activeHbId}/c/`) ||
+        location.pathname.startsWith(`/${activeHbId}/flashcards`))
     )
-    if (!trimmed) return allChapters
-    const lower = trimmed.toLowerCase()
-    return allChapters.filter(
-      (ch) =>
-        ch.title.toLowerCase().includes(lower) ||
-        ch.description.toLowerCase().includes(lower)
-    )
-  }, [handbooks, trimmed])
 
   const actions = useMemo(() => {
     const hbActions = activeHbId
@@ -150,7 +148,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           },
           {
             id: "go-flashcards",
-            label: "Open flashcards",
+            label: "Go to flashcards",
             shortcut: undefined,
             icon: Layers,
             run: () =>
@@ -172,7 +170,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           },
           {
             id: "go-progress",
-            label: "View progress",
+            label: "Go to progress",
             shortcut: undefined,
             icon: BarChart3,
             run: () =>
@@ -211,6 +209,24 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: SunMoon,
         run: () => toggleTheme(),
       },
+      ...(hasActiveSearch
+        ? [
+            {
+              id: "reset-filters",
+              label: "Reset filters",
+              shortcut: undefined,
+              icon: RotateCcw,
+              run: () => {
+                void navigate({
+                  to: ".",
+                  search: {},
+                  replace: true,
+                })
+                toast.success("Filters cleared")
+              },
+            },
+          ]
+        : []),
       ...hbActions,
       ...(import.meta.env.DEV
         ? [
@@ -224,10 +240,18 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           ]
         : []),
     ]
+
+    const trimmed = query.trim().toLowerCase()
     if (!trimmed) return list
-    const lower = trimmed.toLowerCase()
-    return list.filter((a) => a.label.toLowerCase().includes(lower))
-  }, [activeHbId, formatForDisplay, navigate, toggleTheme, trimmed])
+    return list.filter((a) => a.label.toLowerCase().includes(trimmed))
+  }, [
+    activeHbId,
+    formatForDisplay,
+    hasActiveSearch,
+    navigate,
+    query,
+    toggleTheme,
+  ])
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) setQuery("")
@@ -254,43 +278,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               : "Loading index..."}
           </CommandEmpty>
 
-          {matchedCards.length > 0 && (
-            <CommandGroup heading="Cards">
-              {matchedCards.map((card) => {
-                const Icon = CARD_TYPE_ICONS[card.type]
-                return (
-                  <CommandItem
-                    key={card.id}
-                    value={card.id}
-                    onSelect={() => {
-                      handleOpenChange(false)
-                      void navigate({
-                        to: "/$hb/t/$cardId",
-                        params: { hb: card.handbookId, cardId: card.id },
-                      })
-                    }}
-                  >
-                    <Icon className="size-4 text-brand" aria-hidden="true" />
-                    <span className="flex-1 truncate">
-                      {stripInlineCode(card.title)}
-                    </span>
-                    <span className="hidden text-xs text-muted-foreground sm:inline">
-                      {card.chapterTitle}
-                    </span>
-                    <Badge variant="outline" className="text-[10px] capitalize">
-                      {card.difficulty}
-                    </Badge>
-                  </CommandItem>
-                )
-              })}
-            </CommandGroup>
-          )}
+          <SearchResults
+            results={matchedCards}
+            onSelect={(card) => {
+              handleOpenChange(false)
+              void navigate({
+                to: "/$hb/t/$cardId",
+                params: { hb: card.handbookId, cardId: card.id },
+              })
+            }}
+          />
 
           {matchedChapters.length > 0 && (
             <>
-              <CommandSeparator />
+              {matchedCards.length > 0 && <CommandSeparator />}
               <CommandGroup heading="Chapters">
-                {matchedChapters.map((ch) => (
+                {matchedChapters.map(({ chapter: ch, titleSegments }) => (
                   <CommandItem
                     key={`${ch.handbookId}.${ch.slug}`}
                     value={`${ch.handbookId}.${ch.slug}`}
@@ -307,7 +310,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                       aria-hidden="true"
                     />
                     <span className="flex-1 truncate">
-                      {ch.emoji} {ch.title}
+                      {ch.emoji} <HighlightedText segments={titleSegments} />
                     </span>
                     <span className="font-mono text-xs text-muted-foreground">
                       {ch.cardCount} cards
@@ -320,7 +323,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           {actions.length > 0 && (
             <>
-              <CommandSeparator />
+              {(matchedCards.length > 0 || matchedChapters.length > 0) && (
+                <CommandSeparator />
+              )}
               <CommandGroup heading="Actions">
                 {actions.map((action) => {
                   const Icon = action.icon
@@ -334,7 +339,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                       }}
                     >
                       <Icon className="size-4" aria-hidden="true" />
-                      <span className="flex-1">{action.label}</span>
+                      <span className="flex-1">
+                        <HighlightedText
+                          segments={highlightSubstring(action.label, query)}
+                        />
+                      </span>
                       {action.shortcut && (
                         <CommandShortcut>{action.shortcut}</CommandShortcut>
                       )}

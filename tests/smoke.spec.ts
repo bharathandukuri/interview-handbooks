@@ -114,4 +114,56 @@ test.describe("Interview Handbooks smoke flow", () => {
     await page.getByRole("button", { name: /Import & replace/i }).click()
     await expect(page.getByText(/1 known · 1 revisit/i)).toBeVisible()
   })
+
+  test("opens command palette via Mod+K, searches body/title matches, and resets filters", async ({
+    page,
+  }) => {
+    await page.goto("/#/python")
+    await expect(
+      page.getByRole("heading", { name: "Python Interview Handbook" })
+    ).toBeVisible()
+
+    // Open command palette with Control+k
+    await page.keyboard.press("Control+k")
+    const searchInput = page.getByPlaceholder(
+      "Search cards, tags, chapters, or actions..."
+    )
+    await expect(searchInput).toBeVisible()
+
+    // Body search match highlights and navigates to card
+    await searchInput.fill("singletons")
+    await expect(
+      page.getByText(/is vs == on lists and aliases/i).first()
+    ).toBeVisible()
+    await searchInput.press("Enter")
+
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: /is vs == on lists and aliases/i,
+      })
+    ).toBeVisible()
+
+    // Open chapter with active filters and reset filters via Command Palette action
+    await page.goto("/#/python/c/basics?mostAsked=1")
+    await expect(
+      page.locator("main").getByText("1/2", { exact: true })
+    ).toBeVisible()
+    await expect(
+      page.locator("main").getByRole("button", { name: /^Reset$/i })
+    ).toBeVisible()
+
+    await page.keyboard.press("Control+k")
+    await expect(searchInput).toBeVisible()
+    await searchInput.fill("Reset filters")
+    await expect(page.getByText(/Reset filters/i).first()).toBeVisible()
+    await searchInput.press("Enter")
+
+    await expect(
+      page.locator("main").getByText("2/2", { exact: true })
+    ).toBeVisible()
+    await expect(
+      page.locator("main").getByRole("button", { name: /^Reset$/i })
+    ).toBeHidden()
+  })
 })
