@@ -712,6 +712,75 @@ function readYamlFile<T>(
   return result.data
 }
 
+const DEVICON_ICONS_DIR = path.resolve(
+  import.meta.dirname,
+  "../node_modules/devicon/icons"
+)
+
+const DEVICON_ALIASES: Record<string, string> = {
+  sql: "postgresql",
+  postgres: "postgresql",
+  database: "postgresql",
+  js: "javascript",
+  ts: "typescript",
+  "c++": "cplusplus",
+  cpp: "cplusplus",
+  "c#": "csharp",
+  cs: "csharp",
+  golang: "go",
+  k8s: "kubernetes",
+  aws: "amazonwebservices",
+  node: "nodejs",
+  next: "nextjs",
+  vue: "vuejs",
+  tailwind: "tailwindcss",
+}
+
+const deviconSvgCache = new Map<string, string | null>()
+
+export function resolveDeviconSvg(iconName: string): string | undefined {
+  const normalized = iconName
+    .trim()
+    .toLowerCase()
+    .replace(/^devicon-/, "")
+  if (!normalized) return undefined
+
+  const slug = DEVICON_ALIASES[normalized] ?? normalized
+  if (!/^[a-z0-9-]+$/.test(slug)) return undefined
+
+  if (deviconSvgCache.has(slug)) {
+    return deviconSvgCache.get(slug) ?? undefined
+  }
+
+  const iconDir = path.join(DEVICON_ICONS_DIR, slug)
+  const candidates = [
+    `${slug}-original.svg`,
+    `${slug}-plain.svg`,
+    `${slug}-line.svg`,
+  ]
+
+  for (const fileName of candidates) {
+    const candidatePath = path.join(iconDir, fileName)
+    if (fs.existsSync(candidatePath)) {
+      const rawSvg = fs.readFileSync(candidatePath, "utf8").trim()
+      const normalizedSvg = rawSvg.replace(
+        /<svg\b([^>]*)>/i,
+        (_m, attrs: string) => {
+          const cleanedAttrs = attrs
+            .replace(/\s+(?:width|height)="[^"]*"/gi, "")
+            .replace(/\s+aria-hidden="[^"]*"/gi, "")
+          return `<svg${cleanedAttrs} aria-hidden="true">`
+        }
+      )
+      deviconSvgCache.set(slug, normalizedSvg)
+      return normalizedSvg
+    }
+  }
+
+  deviconSvgCache.set(slug, null)
+  return undefined
+}
+
 export async function loadAllHandbooks(
   contentRoot: string,
   options?: { singleHandbook?: string }
@@ -928,6 +997,7 @@ export async function loadAllHandbooks(
       name: hbConfig.name,
       tagline: hbConfig.tagline,
       icon: hbConfig.icon,
+      iconSvg: resolveDeviconSvg(hbConfig.icon),
       accent: hbConfig.accent,
       accent2: hbConfig.accent2,
       version: hbConfig.version,

@@ -27,6 +27,7 @@ export interface HandbookMeta {
   name: string
   tagline: string
   icon: string
+  iconSvg?: string
   accent: string
   accent2: string
   version: number

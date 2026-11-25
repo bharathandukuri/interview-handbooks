@@ -46,8 +46,8 @@ export function HandbookPicker() {
                 <div className="mb-4 flex items-center justify-between">
                   <HandbookIcon
                     icon={hb.icon}
+                    iconSvg={hb.iconSvg}
                     accent={hb.accent}
-                    accent2={hb.accent2}
                     className="size-10 rounded-xl"
                     iconClassName="size-6"
                   />

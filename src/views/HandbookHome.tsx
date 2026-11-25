@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { HandbookIcon } from "@/components/ui/handbook-icon"
 import { Progress } from "@/components/ui/progress"
 import { getCardsForChapter, getProgressCounts } from "@/lib/selectors"
 import { stripInlineCode } from "@/lib/text"
@@ -28,7 +29,13 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
       <section className="rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card) sm:p-8">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 font-mono text-xs text-text-faint">
-            <span className="size-2 rounded-full bg-brand" aria-hidden="true" />
+            <HandbookIcon
+              icon={handbook.icon}
+              iconSvg={handbook.iconSvg}
+              accent={handbook.accent}
+              className="size-5 rounded-md border-0 bg-transparent shadow-none"
+              iconClassName="size-4"
+            />
             <span>
               {handbook.chapterCount} chapters · {handbook.cardCount} cards
             </span>

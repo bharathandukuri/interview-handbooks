@@ -2,7 +2,10 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
-import { loadAllHandbooks } from "../plugins/handbook-content.ts"
+import {
+  loadAllHandbooks,
+  resolveDeviconSvg,
+} from "../plugins/handbook-content.ts"
 import { ContentValidationError } from "../src/lib/schema.ts"
 
 const tempDirs: string[] = []
@@ -72,6 +75,16 @@ describe("loadAllHandbooks on repository Python sample", () => {
 
     expect(result.search.python).toHaveLength(3)
     expect(result.search.python?.[0]?.chapterTitle).toBe("Python Basics")
+    expect(result.handbooks[0]?.iconSvg).toContain("python-original")
+  })
+
+  it("resolves official Devicon SVGs for languages and products with graceful fallback", () => {
+    expect(resolveDeviconSvg("python")).toContain("<svg")
+    expect(resolveDeviconSvg("java")).toContain("<svg")
+    expect(resolveDeviconSvg("sql")).toContain("<svg")
+    expect(resolveDeviconSvg("docker")).toContain("<svg")
+    expect(resolveDeviconSvg("kubernetes")).toContain("<svg")
+    expect(resolveDeviconSvg("nonexistent-tech-icon")).toBeUndefined()
   })
 })
 

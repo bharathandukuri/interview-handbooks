@@ -125,8 +125,8 @@ export function HandbookSidebar({
               >
                 <HandbookIcon
                   icon={handbook.icon}
+                  iconSvg={handbook.iconSvg}
                   accent={handbook.accent}
-                  accent2={handbook.accent2}
                 />
                 <span className="min-w-0 flex-1 truncate font-heading text-sm font-semibold text-foreground">
                   {handbook.name}
