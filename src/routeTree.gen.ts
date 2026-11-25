@@ -14,7 +14,6 @@ import { Route as HbRouteImport } from './routes/$hb'
 import { Route as KitRouteImport } from './routes/[_]kit'
 import { Route as HbIndexRouteImport } from './routes/$hb/index'
 import { Route as HbBookmarksRouteImport } from './routes/$hb/bookmarks'
-import { Route as HbFlashcardsRouteImport } from './routes/$hb/flashcards'
 import { Route as HbProgressRouteImport } from './routes/$hb/progress'
 import { Route as HbRevisionRouteImport } from './routes/$hb/revision'
 import { Route as HbCChapterRouteImport } from './routes/$hb/c.$chapter'
@@ -45,11 +44,6 @@ const HbBookmarksRoute = HbBookmarksRouteImport.update({
   path: '/bookmarks',
   getParentRoute: () => HbRoute,
 } as any)
-const HbFlashcardsRoute = HbFlashcardsRouteImport.update({
-  id: '/flashcards',
-  path: '/flashcards',
-  getParentRoute: () => HbRoute,
-} as any)
 const HbProgressRoute = HbProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -76,7 +70,6 @@ export interface FileRoutesByFullPath {
   '/$hb': typeof HbRouteWithChildren
   '/_kit': typeof KitRoute
   '/$hb/bookmarks': typeof HbBookmarksRoute
-  '/$hb/flashcards': typeof HbFlashcardsRoute
   '/$hb/progress': typeof HbProgressRoute
   '/$hb/revision': typeof HbRevisionRoute
   '/$hb/': typeof HbIndexRoute
@@ -87,7 +80,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/_kit': typeof KitRoute
   '/$hb/bookmarks': typeof HbBookmarksRoute
-  '/$hb/flashcards': typeof HbFlashcardsRoute
   '/$hb/progress': typeof HbProgressRoute
   '/$hb/revision': typeof HbRevisionRoute
   '/$hb': typeof HbIndexRoute
@@ -100,7 +92,6 @@ export interface FileRoutesById {
   '/$hb': typeof HbRouteWithChildren
   '/_kit': typeof KitRoute
   '/$hb/bookmarks': typeof HbBookmarksRoute
-  '/$hb/flashcards': typeof HbFlashcardsRoute
   '/$hb/progress': typeof HbProgressRoute
   '/$hb/revision': typeof HbRevisionRoute
   '/$hb/': typeof HbIndexRoute
@@ -114,7 +105,6 @@ export interface FileRouteTypes {
     | '/$hb'
     | '/_kit'
     | '/$hb/bookmarks'
-    | '/$hb/flashcards'
     | '/$hb/progress'
     | '/$hb/revision'
     | '/$hb/'
@@ -125,7 +115,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_kit'
     | '/$hb/bookmarks'
-    | '/$hb/flashcards'
     | '/$hb/progress'
     | '/$hb/revision'
     | '/$hb'
@@ -137,7 +126,6 @@ export interface FileRouteTypes {
     | '/$hb'
     | '/_kit'
     | '/$hb/bookmarks'
-    | '/$hb/flashcards'
     | '/$hb/progress'
     | '/$hb/revision'
     | '/$hb/'
@@ -188,13 +176,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HbBookmarksRouteImport
       parentRoute: typeof HbRoute
     }
-    '/$hb/flashcards': {
-      id: '/$hb/flashcards'
-      path: '/flashcards'
-      fullPath: '/$hb/flashcards'
-      preLoaderRoute: typeof HbFlashcardsRouteImport
-      parentRoute: typeof HbRoute
-    }
     '/$hb/progress': {
       id: '/$hb/progress'
       path: '/progress'
@@ -228,7 +209,6 @@ declare module '@tanstack/react-router' {
 
 interface HbRouteChildren {
   HbBookmarksRoute: typeof HbBookmarksRoute
-  HbFlashcardsRoute: typeof HbFlashcardsRoute
   HbProgressRoute: typeof HbProgressRoute
   HbRevisionRoute: typeof HbRevisionRoute
   HbIndexRoute: typeof HbIndexRoute
@@ -238,7 +218,6 @@ interface HbRouteChildren {
 
 const HbRouteChildren: HbRouteChildren = {
   HbBookmarksRoute: HbBookmarksRoute,
-  HbFlashcardsRoute: HbFlashcardsRoute,
   HbProgressRoute: HbProgressRoute,
   HbRevisionRoute: HbRevisionRoute,
   HbIndexRoute: HbIndexRoute,

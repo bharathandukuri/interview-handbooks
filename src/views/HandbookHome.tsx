@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, Flame, History, Layers, Zap } from "lucide-react"
+import { ArrowRight, Flame, History, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { HandbookIcon } from "@/components/ui/handbook-icon"
@@ -132,13 +132,6 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
           )}
 
           <Button asChild variant="outline" size="sm">
-            <Link to="/$hb/flashcards" params={{ hb: handbook.id }}>
-              <Layers className="size-4" aria-hidden="true" />
-              <span>Flashcards</span>
-            </Link>
-          </Button>
-
-          <Button asChild variant="ghost" size="sm">
             <Link to="/$hb/revision" params={{ hb: handbook.id }}>
               <Zap className="size-4" aria-hidden="true" />
               <span>Quick Revision</span>

@@ -5,7 +5,6 @@ import {
   Bookmark,
   ChevronRight,
   Home,
-  Layers,
   Zap,
 } from "lucide-react"
 import {
@@ -79,12 +78,6 @@ export function HandbookSidebar({
       to: "/$hb" as const,
       icon: Home,
       isActive: isHomeActive,
-    },
-    {
-      label: "Flashcards",
-      to: "/$hb/flashcards" as const,
-      icon: Layers,
-      isActive: activePath.startsWith(`${hbBasePath}/flashcards`),
     },
     {
       label: "Quick Revision",

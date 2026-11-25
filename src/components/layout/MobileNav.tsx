@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { BarChart3, BookOpen, Home, Layers, Search } from "lucide-react"
+import { BarChart3, BookOpen, Home, Search, Zap } from "lucide-react"
 import { useCommandPalette } from "@/app/providers"
 import type { HandbookBundle } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -25,7 +25,7 @@ export function MobileNav({
   const isChaptersActive =
     activePath.includes(`${hbBasePath}/c/`) ||
     activePath.includes(`${hbBasePath}/t/`)
-  const isFlashcardsActive = activePath.startsWith(`${hbBasePath}/flashcards`)
+  const isRevisionActive = activePath.startsWith(`${hbBasePath}/revision`)
   const isProgressActive = activePath.startsWith(`${hbBasePath}/progress`)
 
   const linkBaseClass =
@@ -64,15 +64,15 @@ export function MobileNav({
       )}
 
       <Link
-        to="/$hb/flashcards"
+        to="/$hb/revision"
         params={{ hb: handbook.id }}
         className={cn(
           linkBaseClass,
-          isFlashcardsActive ? "text-brand" : "text-muted-foreground"
+          isRevisionActive ? "text-brand" : "text-muted-foreground"
         )}
       >
-        <Layers className="size-4" aria-hidden="true" />
-        <span className="truncate">Flashcards</span>
+        <Zap className="size-4" aria-hidden="true" />
+        <span className="truncate">Revision</span>
       </Link>
 
       <button

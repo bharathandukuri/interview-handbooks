@@ -6,7 +6,6 @@ import {
   Bookmark,
   BookOpen,
   Home,
-  Layers,
   Palette,
   RotateCcw,
   SunMoon,
@@ -129,11 +128,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const hasActiveSearch =
     Boolean(location.searchStr && location.searchStr.length > 1) ||
-    Boolean(
-      activeHbId &&
-      (location.pathname.startsWith(`/${activeHbId}/c/`) ||
-        location.pathname.startsWith(`/${activeHbId}/flashcards`))
-    )
+    Boolean(activeHbId && location.pathname.startsWith(`/${activeHbId}/c/`))
 
   const actions = useMemo(() => {
     const hbActions = activeHbId
@@ -145,17 +140,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             icon: Home,
             run: () =>
               void navigate({ to: "/$hb", params: { hb: activeHbId } }),
-          },
-          {
-            id: "go-flashcards",
-            label: "Go to flashcards",
-            shortcut: undefined,
-            icon: Layers,
-            run: () =>
-              void navigate({
-                to: "/$hb/flashcards",
-                params: { hb: activeHbId },
-              }),
           },
           {
             id: "go-revision",

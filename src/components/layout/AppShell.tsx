@@ -20,7 +20,6 @@ interface AppShellProps {
 
 function getSectionLabel(pathname: string, hbId: string): string | undefined {
   const base = `/${hbId}`
-  if (pathname.startsWith(`${base}/flashcards`)) return "Flashcards"
   if (pathname.startsWith(`${base}/revision`)) return "Quick Revision"
   if (pathname.startsWith(`${base}/progress`)) return "Progress"
   if (pathname.startsWith(`${base}/bookmarks`)) return "Bookmarks"

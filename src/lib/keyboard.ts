@@ -59,27 +59,6 @@ export const appHotkeys = defineAppHotkeys({
     meta: { name: "Next card", description: "Navigate to next card" },
     options: { ignoreInputs: true },
   },
-  "flashcard.flip": {
-    hotkey: "Space",
-    scope: "flashcards",
-    meta: {
-      name: "Flip card",
-      description: "Flip flashcard between front and back",
-    },
-    options: { ignoreInputs: true, preventDefault: true },
-  },
-  "flashcard.again": {
-    hotkey: "1",
-    scope: "flashcards",
-    meta: { name: "Again", description: "Mark revisit and re-queue card" },
-    options: { ignoreInputs: true },
-  },
-  "flashcard.gotIt": {
-    hotkey: "2",
-    scope: "flashcards",
-    meta: { name: "Got it", description: "Mark card known and advance" },
-    options: { ignoreInputs: true },
-  },
   "nav.home": {
     hotkey: ["G", "H"],
     scope: "global",

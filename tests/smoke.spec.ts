@@ -167,48 +167,19 @@ test.describe("Interview Handbooks smoke flow", () => {
     ).toBeHidden()
   })
 
-  test("omits UI Kit from sidebar and runs M7 flashcards keyboard flow and printable revision view", async ({
+  test("omits UI Kit and Flashcards and runs printable revision view", async ({
     page,
   }) => {
     await page.goto("/#/python")
-    await expect(
-      page.locator("#handbook-sidebar").getByText("UI Kit")
-    ).toHaveCount(0)
+    const sidebar = page.locator("#handbook-sidebar")
+    await expect(sidebar.getByText("UI Kit")).toHaveCount(0)
+    await expect(sidebar.getByText("Flashcards")).toHaveCount(0)
 
-    // Open Flashcards deck (Python has 2 question/predict cards by default)
+    // Removed flashcards route falls back cleanly to NotFound
     await page.goto("/#/python/flashcards")
-    const stage = page.locator('[data-slot="flashcard-stage"]')
-    await expect(stage).toHaveAttribute("data-motion", "3d")
-    await expect(stage).toHaveAttribute("data-flipped", "false")
-    await expect(page.getByText("Card 1 of 2")).toBeVisible()
-
-    // Space flips to reveal Answer, 1 (Again) re-queues Card 1 after Card 2
-    await page.keyboard.press("Space")
-    await expect(stage).toHaveAttribute("data-flipped", "true")
-
-    await page.keyboard.press("1")
-    await expect(page.getByText("Card 2 of 3")).toBeVisible()
-    await expect(stage).toHaveAttribute("data-flipped", "false")
-
-    // Flip Card 2 and mark Got it (2), then Got it on re-queued Card 1
-    await page.keyboard.press("Space")
-    await page.keyboard.press("2")
-    await expect(page.getByText("Card 3 of 3")).toBeVisible()
-
-    await page.keyboard.press("Space")
-    await page.keyboard.press("2")
     await expect(
-      page.getByRole("heading", { name: /Session complete!/i })
+      page.getByRole("heading", { name: /Page not found/i })
     ).toBeVisible()
-    await expect(
-      page.locator('[data-slot="flashcards-summary"]')
-    ).toContainText(/2\s*Marked known/i)
-
-    // Verify reduced-motion mode falls back from 3D flip to opacity fade
-    await page.emulateMedia({ reducedMotion: "reduce" })
-    await page.getByRole("button", { name: /Practice all cards/i }).click()
-    await expect(stage).toHaveAttribute("data-motion", "fade")
-    await page.emulateMedia({ reducedMotion: "no-preference" })
 
     // Verify Quick Revision view filter toggle and @media print chrome hiding
     await page.goto("/#/python/revision")

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/$hb")({
     }
   },
   component: HandbookLayout,
-  notFoundComponent: () => <NotFound title="Handbook not found" />,
+  notFoundComponent: () => <NotFound />,
   errorComponent: ({ error }) => (
     <NotFound
       title="Could not load handbook"
