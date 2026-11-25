@@ -2,9 +2,11 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 import { load as loadYaml } from "js-yaml"
+import rehypeKatex from "rehype-katex"
 import rehypeStringify from "rehype-stringify"
 import remarkDirective from "remark-directive"
 import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import { createHighlighter, type Highlighter } from "shiki"
@@ -100,7 +102,9 @@ function collectSearchText(nodes: MdastNode[]): string {
     if (
       (node.type === "text" ||
         node.type === "inlineCode" ||
-        node.type === "code") &&
+        node.type === "code" ||
+        node.type === "inlineMath" ||
+        node.type === "math") &&
       typeof node.value === "string"
     ) {
       parts.push(node.value)
@@ -233,6 +237,13 @@ function rehypeShikiBlocks(highlighter: Highlighter) {
           const classNames = Array.isArray(codeNode.properties?.className)
             ? (codeNode.properties.className as unknown[]).map(String)
             : []
+          if (
+            classNames.includes("math-display") ||
+            classNames.includes("math-inline")
+          ) {
+            visitChildren(child)
+            return child
+          }
           const langClass = classNames.find((c) => c.startsWith("language-"))
           const rawLang = langClass
             ? langClass.slice("language-".length)
@@ -285,24 +296,64 @@ function rehypeShikiBlocks(highlighter: Highlighter) {
   }
 }
 
+function findKatexError(node: HastNode): string | null {
+  if (node.type === "element") {
+    const classNames = node.properties?.className
+    const classes = Array.isArray(classNames)
+      ? classNames.map(String)
+      : typeof classNames === "string"
+        ? classNames.split(/\s+/)
+        : []
+    if (classes.includes("katex-error")) {
+      const title = node.properties?.title
+      return typeof title === "string" && title.length > 0
+        ? title
+        : "invalid KaTeX math expression"
+    }
+  }
+  if (Array.isArray(node.children)) {
+    for (const child of node.children) {
+      const found = findKatexError(child)
+      if (found) return found
+    }
+  }
+  return null
+}
+
 function renderMdastNodes(
   nodes: MdastNode[],
-  highlighter: Highlighter
+  highlighter: Highlighter,
+  filePath = "content"
 ): string {
   if (nodes.length === 0) return ""
   const processor = unified()
     .use(remarkRehype)
+    .use(rehypeKatex, { strict: false })
     .use(rehypeShikiBlocks(highlighter))
     .use(rehypeStringify)
 
-  const hast = processor.runSync({
-    type: "root",
-    children: nodes,
-  } as Parameters<typeof processor.runSync>[0])
+  try {
+    const hast = processor.runSync({
+      type: "root",
+      children: nodes,
+    } as Parameters<typeof processor.runSync>[0])
 
-  return String(
-    processor.stringify(hast as Parameters<typeof processor.stringify>[0])
-  ).trim()
+    const katexError = findKatexError(hast as unknown as HastNode)
+    if (katexError) {
+      throw new ContentValidationError(filePath, "math", katexError)
+    }
+
+    return String(
+      processor.stringify(hast as Parameters<typeof processor.stringify>[0])
+    ).trim()
+  } catch (err) {
+    if (err instanceof ContentValidationError) throw err
+    throw new ContentValidationError(
+      filePath,
+      "math",
+      err instanceof Error ? err.message : "failed to render markdown/math"
+    )
+  }
 }
 
 function splitAtH2(
@@ -360,9 +411,11 @@ function extractSectionsAndMeta(
   extraMeta: Record<string, unknown>
 } {
   const allNodes = root.children ?? []
+  const render = (nodesToRender: MdastNode[]): string =>
+    renderMdastNodes(nodesToRender, highlighter, filePath)
 
   if (type === "concept") {
-    const html = renderMdastNodes(allNodes, highlighter)
+    const html = render(allNodes)
     if (!html) {
       throw new ContentValidationError(
         filePath,
@@ -420,7 +473,7 @@ function extractSectionsAndMeta(
 
     for (const h of headings) {
       const key = allowed[h.normalized]
-      const rendered = renderMdastNodes(h.nodes, highlighter)
+      const rendered = render(h.nodes)
       if (rendered) {
         sections[key] = rendered
       }
@@ -445,9 +498,9 @@ function extractSectionsAndMeta(
     }
 
     const codeNode = intro[firstCodeIdx]
-    sections.code = renderMdastNodes([codeNode], highlighter)
+    sections.code = render([codeNode])
     const remainingIntro = intro.filter((_, idx) => idx !== firstCodeIdx)
-    const introHtml = renderMdastNodes(remainingIntro, highlighter)
+    const introHtml = render(remainingIntro)
     if (introHtml) {
       sections.intro = introHtml
     }
@@ -469,7 +522,7 @@ function extractSectionsAndMeta(
       )
     }
     extraMeta.outputText = outputCodeNode.value ?? ""
-    sections.output = renderMdastNodes(outputHeading.nodes, highlighter)
+    sections.output = render(outputHeading.nodes)
 
     const explanationHeading = headingMap.get("explanation")
     if (!explanationHeading || explanationHeading.nodes.length === 0) {
@@ -479,10 +532,7 @@ function extractSectionsAndMeta(
         'predict card requires a non-empty "## Explanation" section'
       )
     }
-    sections.explanation = renderMdastNodes(
-      explanationHeading.nodes,
-      highlighter
-    )
+    sections.explanation = render(explanationHeading.nodes)
 
     return { sections, extraMeta }
   }
@@ -502,9 +552,9 @@ function extractSectionsAndMeta(
       )
     }
 
-    sections.table = renderMdastNodes([tableNode], highlighter)
+    sections.table = render([tableNode])
     const introRemainder = intro.filter((n) => n !== tableNode)
-    const introHtml = renderMdastNodes(introRemainder, highlighter)
+    const introHtml = render(introRemainder)
     if (introHtml) {
       sections.intro = introHtml
     }
@@ -513,10 +563,7 @@ function extractSectionsAndMeta(
       .filter((r) => r.type === "tableRow")
       .map((row) =>
         (row.children ?? []).map((cell) =>
-          renderMdastNodes(
-            [{ type: "paragraph", children: cell.children ?? [] }],
-            highlighter
-          )
+          render([{ type: "paragraph", children: cell.children ?? [] }])
         )
       )
     if (tableRows.length > 0) {
@@ -526,7 +573,7 @@ function extractSectionsAndMeta(
 
     const verdictHeading = headingMap.get("verdict")
     if (verdictHeading) {
-      const verdictHtml = renderMdastNodes(verdictHeading.nodes, highlighter)
+      const verdictHtml = render(verdictHeading.nodes)
       if (verdictHtml) {
         sections.verdict = verdictHtml
       }
@@ -551,7 +598,7 @@ function extractSectionsAndMeta(
         'pitfall card requires "## The trap" with a fenced code block'
       )
     }
-    sections.trap = renderMdastNodes(trapHeading.nodes, highlighter)
+    sections.trap = render(trapHeading.nodes)
 
     const fixHeading = headingMap.get("the fix")
     if (!fixHeading || !containsNodeType(fixHeading.nodes, "code")) {
@@ -561,7 +608,7 @@ function extractSectionsAndMeta(
         'pitfall card requires "## The fix" with a fenced code block'
       )
     }
-    sections.fix = renderMdastNodes(fixHeading.nodes, highlighter)
+    sections.fix = render(fixHeading.nodes)
 
     const whyHeading = headingMap.get("why it happens")
     if (!whyHeading || whyHeading.nodes.length === 0) {
@@ -571,7 +618,7 @@ function extractSectionsAndMeta(
         'pitfall card requires a non-empty "## Why it happens" section'
       )
     }
-    sections.why = renderMdastNodes(whyHeading.nodes, highlighter)
+    sections.why = render(whyHeading.nodes)
 
     return { sections, extraMeta }
   }
@@ -593,20 +640,18 @@ function extractSectionsAndMeta(
       'problem card requires a non-empty "## Problem" section'
     )
   }
-  sections.problem = renderMdastNodes(problemHeading.nodes, highlighter)
+  sections.problem = render(problemHeading.nodes)
 
   const hintHeading = headingMap.get("hint")
   if (hintHeading && hintHeading.nodes.length > 0) {
-    sections.hint = renderMdastNodes(hintHeading.nodes, highlighter)
+    sections.hint = render(hintHeading.nodes)
     const hintList = hintHeading.nodes.find((n) => n.type === "list")
     if (hintList && Array.isArray(hintList.children)) {
       extraMeta.hints = hintList.children.map((item) =>
-        renderMdastNodes(item.children ?? [], highlighter)
+        render(item.children ?? [])
       )
     } else {
-      extraMeta.hints = hintHeading.nodes.map((node) =>
-        renderMdastNodes([node], highlighter)
-      )
+      extraMeta.hints = hintHeading.nodes.map((node) => render([node]))
     }
   }
 
@@ -618,14 +663,11 @@ function extractSectionsAndMeta(
       'problem card requires a non-empty "## Solution" section'
     )
   }
-  sections.solution = renderMdastNodes(solutionHeading.nodes, highlighter)
+  sections.solution = render(solutionHeading.nodes)
 
   const walkthroughHeading = headingMap.get("walkthrough")
   if (walkthroughHeading && walkthroughHeading.nodes.length > 0) {
-    sections.walkthrough = renderMdastNodes(
-      walkthroughHeading.nodes,
-      highlighter
-    )
+    sections.walkthrough = render(walkthroughHeading.nodes)
   }
 
   return { sections, extraMeta }
@@ -805,6 +847,7 @@ export async function loadAllHandbooks(
         const mdParser = unified()
           .use(remarkParse)
           .use(remarkGfm)
+          .use(remarkMath)
           .use(remarkDirective)
         const mdast = mdParser.parse(
           parsedMatter.content

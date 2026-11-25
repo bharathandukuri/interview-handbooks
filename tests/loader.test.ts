@@ -246,4 +246,60 @@ describe("loadAllHandbooks validation and warnings", () => {
     expect(card?.sections.body).not.toContain("data-code-block")
     expect(card?.searchText).toContain("Start --> Finish")
   })
+
+  it("compiles inline and block KaTeX math without treating block math as code blocks", async () => {
+    const root = makeTempContent((dir) => {
+      writeFile(path.join(dir, "demo/handbook.yml"), baseHandbook)
+      writeFile(path.join(dir, "demo/01-intro/chapter.yml"), baseChapter)
+      writeFile(
+        path.join(dir, "demo/01-intro/01-math.md"),
+        [
+          "---",
+          "type: concept",
+          "title: Recurrence complexity",
+          "difficulty: medium",
+          "tags: [complexity, math]",
+          "---",
+          "",
+          "Merge sort achieves $O(n \\log n)$ time via the recurrence:",
+          "",
+          "$$",
+          "T(n) = 2T(n/2) + \\Theta(n)",
+          "$$",
+          "",
+          "```python",
+          "def merge_sort(arr):",
+          "    return arr",
+          "```",
+        ].join("\n")
+      )
+    })
+
+    const data = await loadAllHandbooks(root)
+    const card = data.bundles.demo?.cards[0]
+    expect(card?.sections.body).toContain('class="katex"')
+    expect(card?.sections.body).toContain('class="katex-display"')
+    expect(card?.sections.body).toContain("<math ")
+    expect(card?.sections.body).toContain("data-code-block")
+    expect(card?.sections.body).not.toContain("math-display")
+    expect(card?.searchText).toContain("O(n \\log n)")
+    expect(card?.searchText).toContain("T(n) = 2T(n/2)")
+  })
+
+  it("fails with file path and math field on malformed KaTeX syntax", async () => {
+    const root = makeTempContent((dir) => {
+      writeFile(path.join(dir, "demo/handbook.yml"), baseHandbook)
+      writeFile(path.join(dir, "demo/01-intro/chapter.yml"), baseChapter)
+      writeFile(
+        path.join(dir, "demo/01-intro/01-bad-math.md"),
+        `---\ntype: concept\ntitle: Bad math\ndifficulty: easy\ntags: [math]\n---\n\nBroken formula $\\frac{1$ here.\n`
+      )
+    })
+
+    await expect(loadAllHandbooks(root)).rejects.toMatchObject({
+      name: "ContentValidationError",
+      field: "math",
+      filePath: expect.stringContaining("01-bad-math.md"),
+    })
+  })
 })

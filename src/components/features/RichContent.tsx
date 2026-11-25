@@ -72,6 +72,19 @@ function renderDomNode(
     return <MermaidDiagram key={key} code={code} />
   }
 
+  if (
+    (tag === "span" || tag === "div") &&
+    (el.classList.contains("katex-display") || el.classList.contains("katex"))
+  ) {
+    return (
+      <span
+        key={key}
+        className={el.className}
+        dangerouslySetInnerHTML={{ __html: el.innerHTML }}
+      />
+    )
+  }
+
   if (tag === "div" && el.hasAttribute("data-code-block")) {
     const lang = el.getAttribute("data-lang") ?? "text"
     const preHtml = el.innerHTML

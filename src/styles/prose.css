@@ -136,3 +136,25 @@
   user-select: none;
   pointer-events: none;
 }
+
+/* KaTeX math theming */
+.katex {
+  color: var(--text);
+  font-size: 1.04em;
+}
+
+.katex-display {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--surface-2);
+}
+
+.katex-display > .katex {
+  display: inline-block;
+  max-width: 100%;
+}

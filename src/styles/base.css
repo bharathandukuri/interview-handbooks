@@ -1,8 +1,42 @@
 @import "@fontsource-variable/space-grotesk";
 @import "@fontsource-variable/plus-jakarta-sans";
 @import "@fontsource-variable/fira-code";
+@import "katex/dist/katex.min.css";
 
 @layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-faint);
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: var(--accent);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   html {
     font-family: var(--font-sans);
     background-color: var(--bg);
