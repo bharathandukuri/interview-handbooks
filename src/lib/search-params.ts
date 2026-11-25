@@ -2,6 +2,18 @@ import { z } from "zod"
 
 export const cardFilterSearchSchema = z.object({
   difficulty: z.enum(["easy", "medium", "hard"]).optional().catch(undefined),
+  type: z
+    .enum([
+      "all",
+      "concept",
+      "compare",
+      "predict",
+      "pitfall",
+      "question",
+      "problem",
+    ])
+    .optional()
+    .catch(undefined),
   tag: z.string().trim().min(1).optional().catch(undefined),
   status: z
     .enum(["all", "untouched", "revisit", "known"])

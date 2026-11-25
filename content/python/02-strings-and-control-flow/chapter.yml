@@ -1,0 +1,3 @@
+title: Strings, Bytes & Control Flow
+icon: terminal
+description: Text indexing, slicing, UTF-8 bytes, f-strings, conditionals, match-case, and loops.

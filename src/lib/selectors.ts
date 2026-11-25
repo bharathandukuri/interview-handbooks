@@ -132,6 +132,9 @@ export function filterCards(
     if (filters.difficulty && card.difficulty !== filters.difficulty) {
       return false
     }
+    if (filters.type && filters.type !== "all" && card.type !== filters.type) {
+      return false
+    }
     if (
       selectedTags.length > 0 &&
       !selectedTags.some((tag) => card.tags.includes(tag))

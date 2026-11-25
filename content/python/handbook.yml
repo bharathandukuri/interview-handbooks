@@ -1,15 +1,12 @@
 id: python
 name: Python
-tagline: Crack the Python interview, one card at a time
+tagline: Complete zero-to-advanced Python 3.12+ study handbook & interview guide
 icon: python
 accent: "#4A90E2"
 accent2: "#FFD43B"
 version: 1
 chapters:
   - 01-basics
-  - 02-functions
-  - 03-oop
-  - 04-internals
-  - 05-concurrency
-  - 06-stdlib
-  - 07-coding
+  - 02-strings-and-control-flow
+  - 03-data-structures
+  - 04-functions

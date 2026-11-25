@@ -36,6 +36,16 @@ const STATUS_LABELS: Record<string, string> = {
   known: "Known",
 }
 
+const TYPE_LABELS: Record<string, string> = {
+  all: "All types",
+  concept: "Lesson",
+  compare: "Compare",
+  predict: "Predict",
+  pitfall: "Pitfall",
+  question: "Question",
+  problem: "Problem",
+}
+
 const SORT_LABELS: Record<string, string> = {
   order: "Default order",
   difficulty: "Difficulty",
@@ -45,6 +55,7 @@ const SORT_LABELS: Record<string, string> = {
 export function cleanSearchParams(next: CardFilterSearch): CardFilterSearch {
   return {
     difficulty: next.difficulty,
+    type: next.type && next.type !== "all" ? next.type : undefined,
     tag: next.tag || undefined,
     status: next.status && next.status !== "all" ? next.status : undefined,
     mostAsked: next.mostAsked ? true : undefined,
@@ -67,9 +78,11 @@ export function FilterBar({
     : []
 
   const activeStatus = filters.status ?? "all"
+  const activeType = filters.type ?? "all"
   const activeSort = filters.sort ?? "order"
   const hasActiveFilters = Boolean(
     filters.difficulty ||
+    (filters.type && filters.type !== "all") ||
     selectedTags.length > 0 ||
     (filters.status && filters.status !== "all") ||
     filters.mostAsked ||
@@ -129,6 +142,61 @@ export function FilterBar({
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
+
+        {/* Card type filter */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              variant={activeType !== "all" ? "secondary" : "outline"}
+              size="sm"
+              className="h-8 gap-1.5 px-2.5 text-xs"
+            >
+              <span>{TYPE_LABELS[activeType]}</span>
+              <ChevronDown
+                className="size-3 text-muted-foreground"
+                aria-hidden="true"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-44">
+            <DropdownMenuLabel>Card type</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup
+              value={activeType}
+              onValueChange={(value) =>
+                onChange(
+                  cleanSearchParams({
+                    ...filters,
+                    type: value as CardFilterSearch["type"],
+                  })
+                )
+              }
+            >
+              <DropdownMenuRadioItem value="all">
+                All types
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="concept">
+                Lesson (Concept)
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="compare">
+                Compare
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="predict">
+                Predict
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="pitfall">
+                Pitfall
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="question">
+                Question
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="problem">
+                Problem
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Multi-select Tags dropdown */}
         {availableTags.length > 0 && (

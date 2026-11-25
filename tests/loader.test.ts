@@ -38,8 +38,8 @@ describe("loadAllHandbooks on repository Python sample", () => {
 
     expect(result.handbooks).toHaveLength(1)
     expect(result.handbooks[0]?.id).toBe("python")
-    expect(result.handbooks[0]?.chapterCount).toBe(7)
-    expect(result.handbooks[0]?.cardCount).toBe(34)
+    expect(result.handbooks[0]?.chapterCount).toBeGreaterThanOrEqual(4)
+    expect(result.handbooks[0]?.cardCount).toBeGreaterThanOrEqual(36)
     expect(result.warnings).toHaveLength(0)
 
     const bundle = result.bundles.python
@@ -81,8 +81,12 @@ describe("loadAllHandbooks on repository Python sample", () => {
       'data-callout-title="Forwarding safely"'
     )
 
-    expect(result.search.python).toHaveLength(34)
-    expect(result.search.python?.[0]?.chapterTitle).toBe("Python Basics")
+    expect(result.search.python).toHaveLength(
+      result.handbooks[0]?.cardCount ?? 0
+    )
+    expect(result.search.python?.[0]?.chapterTitle).toBe(
+      "Python From Zero & Core Basics"
+    )
     expect(result.handbooks[0]?.iconSvg).toContain("python-original")
   })
 

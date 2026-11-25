@@ -177,8 +177,13 @@ export function HandbookSidebar({
                 const cards = getCardsForChapter(bundle, ch.slug)
                 const counts = getProgressCounts(cards, statusMap)
                 const chapterKey = `${handbook.id}.${ch.slug}`
-                const isCollapsed = collapsedChapters[chapterKey] ?? false
                 const isCurrentChapter = activeChapterSlug === ch.slug
+                const defaultExpanded =
+                  handbook.chapters.length <= 3 ||
+                  isCurrentChapter ||
+                  (!activeChapterSlug && ch.slug === handbook.chapters[0]?.slug)
+                const isCollapsed =
+                  collapsedChapters[chapterKey] ?? !defaultExpanded
 
                 if (isIconCollapsed) {
                   return (
