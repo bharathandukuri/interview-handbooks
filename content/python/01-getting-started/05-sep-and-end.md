@@ -1,35 +1,44 @@
 ---
 type: concept
-title: "Change how print() works: sep and end"
+title: "Customize print() output with sep and end"
 difficulty: easy
-tags: [print, basics]
+tags: [print, arguments, basics]
 revision:
-  - "`sep` is what goes between items (default: one space)"
-  - "`end` is what goes after everything (default: a new line)"
+  - "`sep` controls what separates multiple arguments (default `' '` — a single space)"
+  - "`end` controls what prints at the very end (default `'\\n'` — a newline)"
+  - "`sep` only appears **between** items, so passing 0 or 1 item does not print `sep`"
 ---
 
-`print()` has two helpers you can change:
+By default, **`print()`** uses two hidden **keyword arguments** (named options with built-in default values):
 
-- `sep` is what goes **between** the items. The normal value is one space.
-- `end` is what goes **after** everything. The normal value is a new line.
+- **`sep=" "` (separator):** what Python places **between** two or more comma-separated arguments (default is one space).
+- **`end="\n"` (ending):** what Python appends **after the last argument** (default `\n` moves to a new line — `\n` is an **escape sequence** meaning "newline", covered in full in Chapter 04).
 
 ```python
-print("25", "11", "2026", sep="-")
-print("Loading", end="...")
-print("done")
+print("25", "11", "2026", sep="-")       # dashes between items
+print("No", "gaps", "here", sep="")      # empty string removes all spaces!
+print("OnlyOne", sep="-")                # 1 item -> sep is NEVER added!
+
+print("Loading", end="...")              # stays on the SAME line
+print("done!")                           # picks up right after "..."
+
+print("Line", end=" | ")                 # ends with " | " instead of newline
+print("Next")
 ```
 
 The screen shows:
 
 ```text
 25-11-2026
-Loading...done
+Nogapshere
+OnlyOne
+Loading...done!
+Line | Next
 ```
 
-The first line uses `sep="-"`, so dashes sit between the items.
+**Important details and edge cases:**
 
-The second `print()` uses `end="..."`, so it does **not** start a new line. The next `print()` carries on right after it.
-
-:::tip[Remove the space]
-Use `sep=""` when you do not want anything between the items. You will use this a lot.
-:::
+- **Order rule (`*args` before keyword options):** Keyword options like `sep="-"` and `end=""` must always go **after** the items you want to print (`print(sep="-", "a", "b")` causes a `SyntaxError`!).
+- **Single-item `sep` surprise:** `print("OnlyOne", sep="-")` prints `OnlyOne` without any dashes, because `sep` goes _between_ adjacent arguments — with only one item there is no gap to fill!
+- **`sep=None` / `end=None`:** Passing `None` tells `print()` to fall back to the default space / newline.
+- **No newline when using `end=""`:** Calling `print("Hi", end="")` prints `"Hi"` without moving down a line — remember to call `print()` later if you want to return to a fresh line!

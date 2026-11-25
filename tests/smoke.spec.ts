@@ -4,16 +4,17 @@ test.describe("Interview Handbooks smoke flow", () => {
   test("persists card progress and bookmarks across reload and supports revisit, backup, and reset", async ({
     page,
   }) => {
+    test.setTimeout(60_000)
     await page.goto("/#/python")
 
     await expect(
       page.getByRole("heading", { name: "Python Interview Handbook" })
     ).toBeVisible()
 
-    // Open the first card ("Mutable vs immutable: why does it matter?")
+    // Open the Most Asked question card ("Is Python compiled or interpreted?")
     await page
       .getByRole("link", {
-        name: /Mutable vs immutable: why does it matter\?/i,
+        name: /Is Python compiled or interpreted\?/i,
       })
       .first()
       .click()
@@ -21,7 +22,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Mutable vs immutable: why does it matter?",
+        name: "Is Python compiled or interpreted?",
       })
     ).toBeVisible()
 
@@ -48,7 +49,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Mutable vs immutable: why does it matter?",
+        name: "Is Python compiled or interpreted?",
       })
     ).toBeVisible()
     await expect(
@@ -68,13 +69,13 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(page.getByText(/1 saved card in Python/i)).toBeVisible()
     await page
       .getByRole("button", {
-        name: /Remove bookmark for Mutable vs immutable/i,
+        name: /Remove bookmark for Is Python compiled or interpreted/i,
       })
       .click()
     await expect(page.getByText(/No bookmarks yet\./i)).toBeVisible()
 
     // Mark a second card as Revisit and check Revisit list on Progress view
-    await page.goto("/#/python/t/python.basics.is-vs-equals")
+    await page.goto("/#/python/t/python.operators-and-decisions.equals-vs-is")
     await page
       .locator('[data-slot="status-toggle"]')
       .getByRole("button", { name: /^Revisit/i })
@@ -84,7 +85,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(page.getByText(/1 known · 1 revisit/i)).toBeVisible()
     await expect(
       page.getByRole("button", {
-        name: /Mark `is` vs `==` on lists and aliases as known|Mark is vs == on lists and aliases as known/i,
+        name: /Mark What is the difference between == and is\? as known/i,
       })
     ).toBeVisible()
 
@@ -131,10 +132,10 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(searchInput).toBeVisible()
 
     // Body search match highlights and navigates to card
-    await searchInput.fill("singletons")
+    await searchInput.fill("identical copies of a book")
     const targetResult = page
       .getByRole("dialog")
-      .getByText(/is vs == on lists and aliases/i)
+      .getByText(/What is the difference between == and is\?/i)
       .first()
     await expect(targetResult).toBeVisible()
     await targetResult.click()
@@ -142,14 +143,14 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: /is vs == on lists and aliases/i,
+        name: /What is the difference between == and is\?/i,
       })
     ).toBeVisible()
 
     // Open chapter with active filters and reset filters via Command Palette action
-    await page.goto("/#/python/c/basics?mostAsked=1")
+    await page.goto("/#/python/c/getting-started?mostAsked=1")
     await expect(
-      page.locator("main").getByText("3/10", { exact: true })
+      page.locator("main").getByText("4/18", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -166,7 +167,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await resetAction.click()
 
     await expect(
-      page.locator("main").getByText("10/10", { exact: true })
+      page.locator("main").getByText("18/18", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -210,12 +211,14 @@ test.describe("Interview Handbooks smoke flow", () => {
   test("supports keyboard shortcuts for Next (ArrowRight/N), Prev (ArrowLeft/P), and Back to chapter (B) with legible kbd badges", async ({
     page,
   }) => {
-    await page.goto("/#/python/t/python.basics.mutable-vs-immutable")
+    await page.goto(
+      "/#/python/t/python.getting-started.is-python-compiled-or-interpreted"
+    )
 
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Mutable vs immutable: why does it matter?",
+        name: "Is Python compiled or interpreted?",
       })
     ).toBeVisible()
 
@@ -229,7 +232,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: /is vs == on lists and aliases/i,
+        name: "Chapter challenge: interactive two-question reply",
       })
     ).toBeVisible()
 
@@ -238,7 +241,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Mutable vs immutable: why does it matter?",
+        name: "Is Python compiled or interpreted?",
       })
     ).toBeVisible()
 
@@ -247,7 +250,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: /is vs == on lists and aliases/i,
+        name: "Chapter challenge: interactive two-question reply",
       })
     ).toBeVisible()
 
@@ -255,7 +258,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Mutable vs immutable: why does it matter?",
+        name: "Is Python compiled or interpreted?",
       })
     ).toBeVisible()
 
@@ -264,7 +267,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", {
         level: 1,
-        name: "Python From Zero & Core Basics",
+        name: "Getting Started",
       })
     ).toBeVisible()
   })

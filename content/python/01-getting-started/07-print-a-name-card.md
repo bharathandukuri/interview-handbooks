@@ -1,11 +1,11 @@
 ---
 type: problem
-title: "Print a name card"
+title: "Print a formatted name card"
 difficulty: easy
 complexity:
-  time: "Instant"
-  space: "Tiny"
-approach: "One print() for each line"
+  time: "Instant (O(1))"
+  space: "Tiny (O(1))"
+approach: "Use print() per line, blank print() dividers, and sep='' / sep='-' cleanly"
 tags: [print, practice]
 related:
   [python.getting-started.print-basics, python.getting-started.sep-and-end]
@@ -13,34 +13,42 @@ related:
 
 ## Problem
 
-Write a program that prints a small name card with 3 lines. Use your own details if you like.
+Write a program that prints a neat 4-part name card exactly matching this spacing and punctuation:
 
 ```text
+--- Card ---
 Name: Asha
 City: Pune
-Hobby: Chess
+
+Date: 25-11-2026
 ```
 
-**Part 2:** On a new line, print the date `25-11-2026`. Give `print()` three separate items (`"25"`, `"11"` and `"2026"`) and let `print()` add the dashes.
+Requirements:
+
+- Print an empty blank line between `City: Pune` and `Date: 25-11-2026`.
+- Print `"25"`, `"11"`, and `"2026"` as three separate arguments joined with `-`, right after `"Date: "` on the **same line**!
 
 ## Hint
 
-- Use one `print()` for each line of the name card.
-- Words need quotes.
-- For the date, use the `sep` helper.
+- An empty `print()` outputs one blank line.
+- Put `end=""` on `print("Date: ", end="")` so the next `print("25", "11", "2026", sep="-")` stays right beside `"Date: "`!
+- Notice why using `print("Date:", "25", "11", "2026", sep="-")` would be wrong: it would insert a dash `Date:-25-11-2026`!
 
 ## Solution
 
 ```python
+print("--- Card ---")
 print("Name: Asha")
 print("City: Pune")
-print("Hobby: Chess")
-
+print()
+print("Date: ", end="")
 print("25", "11", "2026", sep="-")
 ```
 
 ## Walkthrough
 
-Each `print()` shows one line and then moves to the next line. Three `print()` calls give three lines.
+Look closely at the subtle `sep="-"` pitfall solved cleanly on the last two lines:
 
-For the date, we pass three items to one `print()`. Setting `sep="-"` tells Python to put a dash between the items instead of a space, so you get `25-11-2026`.
+- Passing `"Date: "` and the three date pieces into a _single_ `print("Date: ", "25", "11", "2026", sep="-")` would put dashes everywhere (`Date: -25-11-2026`).
+- Printing `"Date: "` first with **`end=""`** keeps the cursor on the same line, and the second `print(...)` applies **`sep="-"`** strictly to the three date numbers!
+- Using **`print()`** with zero arguments prints a clean blank spacer line without printing `None` or extra spaces.

@@ -1,33 +1,35 @@
 ---
 type: concept
-title: "Comments: notes for humans"
+title: "Comments: notes for humans (# and # inside strings)"
 difficulty: easy
-tags: [comments, basics]
+tags: [comments, clean-code, basics]
 revision:
-  - "A comment starts with `#` and Python ignores it"
-  - "Good comments explain why, not what"
+  - "Anything after `#` on a line (outside quotes) is a **comment** and Python ignores it"
+  - "A `#` **inside** quotes (`'Item #1'`) is normal text, NOT a comment!"
+  - "Python has no `/* ... */` block comment syntax — put `#` at the start of each commented line"
 ---
 
-A **comment** is a note for people who read your code. Python ignores it completely. A comment starts with `#`.
+A **comment** is a note written for human readers (including your future self 6 months later!). Python skips comments completely when running your program.
+
+Every comment starts with the hash symbol **`#`** and stops at the end of that line:
 
 ```python
-# This whole line is a comment
-print("Hi")   # a comment can also come after code
+# Whole-line comment: Python ignores everything here
+print("Run this")              # inline comment: code before `#` STILL runs!
+# print("Switched off!")       # temporarily disabled without deleting
+
+print("Order #402 is #1!")     # `#` INSIDE quotes is plain text, NOT a comment!
 ```
 
-The screen shows only:
+The screen shows:
 
 ```text
-Hi
+Run this
+Order #402 is #1!
 ```
 
-You can also use `#` to switch a line off for a moment, without deleting it:
+**Important details and edge cases:**
 
-```python
-print("This runs")
-# print("This does not run")
-```
-
-:::tip[Explain the why]
-A good comment says **why** you did something. It does not repeat what the code already says. Too many comments make code harder to read, not easier.
-:::
+- **`#` inside strings:** Python only treats `#` as a comment when it sits **outside** string quotes. In `"Order #402"`, both `#` symbols print normally!
+- **Multi-line comments:** Unlike C, Java, or JavaScript (`/* ... */`), Python has no special block-comment marker — start each commented line with `#` (most editors toggle `#` on multiple highlighted lines at once with `Ctrl+/` or `Cmd+/`). Note that standalone triple-quoted strings (`"""..."""`) _inside_ functions/files act as **docstrings** (Chapter 09), though Python still reads them as string objects unless optimized away — so always prefer `#` for regular comments!
+- **Write _why_, not _what_:** Do not write `# print hi` above `print("Hi")`; use comments to explain _reasons_, business rules, or tricky edge cases (for example `# Skip tax for tax-exempt orders`).

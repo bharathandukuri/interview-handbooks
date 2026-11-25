@@ -1,18 +1,18 @@
 ---
 type: predict
-title: "What is score now?"
+title: "Reassigning a variable using its own old value"
 difficulty: easy
-tags: [variables, assignment]
+tags: [variables, assignment, trace]
 related: [python.variables-and-types.what-is-a-variable]
 options:
-  - "10"
   - "15"
+  - "10"
   - "5"
-  - "It shows an error"
-answer: 1
+  - "SyntaxError or NameError"
+answer: 0
 ---
 
-A variable can get a new value at any time. Read the code and guess what the screen shows.
+A variable can be updated at any time — even using its own current value in the formula. Trace what prints:
 
 ```python
 score = 10
@@ -28,8 +28,10 @@ print(score)
 
 ## Explanation
 
-Python always works out the **right** side first. On the right, `score` is 10, so `score + 5` is 15.
+Trace each step using Python's **"evaluate right side first, then bind left name"** rule:
 
-Then Python saves that 15 under the name `score`. The old value, 10, is forgotten.
-
-So a line like `score = score + 5` is not a maths puzzle. It means "take the current score, add 5, and save it back as score".
+1. `score = 10` creates integer `10` and sticks label `score` onto it.
+2. On `score = score + 5`:
+   - First, Python evaluates the **right-hand expression** `score + 5`, reading `10 + 5` -> **`15`**.
+   - Next, Python moves the sticky note `score` away from `10` and attaches it onto **`15`**.
+3. `print(score)` prints `15`. (In Chapter 03, you will also learn shorthand `score += 5` for updating numbers in one step!)

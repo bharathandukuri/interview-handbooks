@@ -1,31 +1,34 @@
 ---
 type: concept
-title: "Naming variables: the rules"
+title: "Naming variables: rules, keywords, and clean conventions"
 difficulty: easy
-tags: [variables, naming, basics]
+tags: [variables, naming, pep8, basics]
 revision:
-  - "Use letters, digits and underscores, and do not start with a digit"
-  - "Names are case sensitive: `age` and `Age` are different"
-  - "Write names in snake_case"
+  - "**Identifiers** (variable names) may contain letters, digits, and `_`, and cannot start with a digit"
+  - "Names are **case-sensitive** (`age` != `Age`) and cannot match Python **reserved keywords** (`if`, `for`, `class`, `True`)"
+  - "Use `snake_case` for variables, `UPPER_CASE` for constants, and NEVER shadow built-in names like `str`, `int`, or `print`!"
 ---
 
-You can pick almost any name for a variable, but there are a few rules.
+Names you pick for variables, functions, and classes are called **identifiers**. Python enforces strict grammar rules on every identifier, plus team readability conventions (**PEP 8**):
 
-1. Use only letters, digits and underscores (`_`).
-2. Do not start with a digit.
-3. No spaces and no dashes.
-4. Capital letters matter. `age` and `Age` are two different names.
-5. Do not use words Python already owns, like `if`, `for`, `class` or `True`.
+**Hard Python rules (breaking them raises `SyntaxError`):**
 
-| Name          | Allowed? | Why                                    |
-| ------------- | -------- | -------------------------------------- |
-| `total_price` | Yes      | Letters and an underscore              |
-| `score2`      | Yes      | A digit is fine, just not at the start |
-| `2nd_place`   | No       | It starts with a digit                 |
-| `my-name`     | No       | A dash is not allowed                  |
-| `first name`  | No       | A space is not allowed                 |
-| `class`       | No       | Python already uses this word          |
+1. Allowed characters: letters (`a-z`, `A-Z` — Python 3 also allows Unicode letters cleanly), digits (`0-9`), and underscores (`_`).
+2. **Cannot start with a digit:** `player2` is fine; `2nd_player` raises `SyntaxError`.
+3. **No spaces, hyphens `-`, or `@`/`$` symbols:** `user-age` reads to Python as `user minus age`!
+4. **Cannot use Python's reserved keywords:** words that Python reserves for its grammar (`if`, `else`, `for`, `while`, `def`, `class`, `return`, `import`, `True`, `False`, `None`, `and`, `or`, `not`, `in`, `is`).
+5. **Case-sensitive:** `score`, `Score`, and `SCORE` are three completely separate variables!
 
-:::tip[Style]
-Write names in `snake_case`: small letters with underscores. Pick names that say what the value is. `total_price` is better than `tp`.
-:::
+| Name          | Valid? | Notes                                                  |
+| ------------- | ------ | ------------------------------------------------------ |
+| `total_price` | ✅ Yes | Descriptive `snake_case` (recommended!)                |
+| `score2`      | ✅ Yes | Digits anywhere after character 1                      |
+| `_temp`       | ✅ Yes | Leading `_` conventionally signals internal/helper use |
+| `2nd_place`   | ❌ No  | Starts with a digit -> `SyntaxError`                   |
+| `my-name`     | ❌ No  | Hyphen `-` means subtraction -> `SyntaxError`          |
+| `class`       | ❌ No  | Reserved keyword -> `SyntaxError`                      |
+
+**Two subtle traps beginners hit:**
+
+- **Never overwrite built-in function/type names:** Python _lets_ you write `print = "oops"` or `str = 10` without a `SyntaxError` because `print` and `str` are built-in names, **not** reserved keywords! Yet the next time you write `print("hi")`, Python crashes with **`TypeError: 'str' object is not callable`**! Never name variables `print`, `input`, `str`, `int`, `list`, `dict`, or `type`.
+- **Naming conventions:** write variables in lowercase **`snake_case`** (`total_price`, not cryptic `tp`), write fixed module settings in **`UPPER_SNAKE_CASE`** (`MAX_RETRIES = 3` — Python still allows changing constants, so capitals tell humans "do not modify!"), and use single **`_`** for throwaway values you intentionally ignore (`a, _ = 10, 20`).
