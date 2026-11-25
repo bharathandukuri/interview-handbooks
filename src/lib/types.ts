@@ -3,6 +3,13 @@ export type CardType =
 
 export type Difficulty = "easy" | "medium" | "hard"
 
+export type CardStatus = "known" | "revisit"
+
+export interface RelatedCardInfo {
+  id: string
+  title: string
+}
+
 export type DirectiveVariant = "tip" | "pitfall" | "insight" | "complexity"
 
 export interface ChapterMeta {

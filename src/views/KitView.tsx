@@ -2,10 +2,15 @@ import { useState } from "react"
 import { useFormatForDisplay } from "@tanstack/react-hotkeys"
 import { Link } from "@tanstack/react-router"
 import { ArrowLeft, Check, Flame, Search, Sparkles } from "lucide-react"
+import { toast } from "sonner"
 import { useCommandPalette } from "@/app/providers"
+import { CardRenderer } from "@/components/cards/CardRenderer"
+import { CodeBlock } from "@/components/features/CodeBlock"
+import { StatusToggle } from "@/components/features/StatusToggle"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Callout } from "@/components/ui/callout"
 import {
   Dialog,
   DialogContent,
@@ -14,6 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { Input } from "@/components/ui/input"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { Progress } from "@/components/ui/progress"
@@ -27,6 +33,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { appHotkeys } from "@/lib/keyboard"
+import type { CardStatus } from "@/lib/types"
 import {
   applyHandbookAccent,
   getContrastForeground,
@@ -36,6 +43,7 @@ import {
   useSettingsStore,
   type FontScaleSetting,
 } from "@/store/useSettingsStore"
+import { KIT_SAMPLE_CARDS } from "@/views/kitFixtures"
 
 interface TokenRow {
   token: string
@@ -138,6 +146,15 @@ export function KitView() {
   const [activePreset, setActivePreset] = useState<string>("python")
   const [previewAccent, setPreviewAccent] = useState<string>("#4A90E2")
   const [difficultyFilter, setDifficultyFilter] = useState<string[]>(["easy"])
+  const [standaloneStatus, setStandaloneStatus] = useState<
+    CardStatus | undefined
+  >("known")
+  const [cardStatuses, setCardStatuses] = useState<
+    Record<string, CardStatus | undefined>
+  >({})
+  const [cardBookmarks, setCardBookmarks] = useState<Record<string, boolean>>(
+    {}
+  )
   const formatForDisplay = useFormatForDisplay()
   const { openPalette } = useCommandPalette()
 
@@ -658,6 +675,106 @@ export function KitView() {
                 <Skeleton className="h-7 w-24 rounded-md" />
               </div>
             </div>
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* M2 Feature Primitives: DifficultyBadge, StatusToggle, Callout, CodeBlock */}
+        <section aria-labelledby="kit-m2-primitives" className="space-y-4">
+          <div>
+            <h2
+              id="kit-m2-primitives"
+              className="text-xl font-semibold tracking-tight"
+            >
+              Card Feature Primitives
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              DifficultyBadge, StatusToggle (3-state), Callout variants, and
+              CodeBlock with copy, wrap toggle, and optional output panel.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-surface p-5 shadow-(--shadow-card)">
+            <div className="flex flex-wrap items-center gap-2">
+              <DifficultyBadge difficulty="easy" />
+              <DifficultyBadge difficulty="medium" />
+              <DifficultyBadge difficulty="hard" />
+            </div>
+
+            <StatusToggle
+              status={standaloneStatus}
+              onChange={setStandaloneStatus}
+            />
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Callout variant="tip" title="Pro tip">
+              Keep explanations conversational and under 150 words per card.
+            </Callout>
+            <Callout variant="pitfall" title="Watch out">
+              Shared mutable state can cause subtle aliasing across calls.
+            </Callout>
+            <Callout variant="insight" title="Interview insight">
+              Follow up by contrasting space complexity against latency gains.
+            </Callout>
+            <Callout variant="complexity">
+              Average lookup is <code>O(1)</code>; worst-case rehash is{" "}
+              <code>O(n)</code>.
+            </Callout>
+          </div>
+
+          <CodeBlock
+            language="typescript"
+            title="CodeBlock with Output"
+            html='<pre class="shiki"><code>const sum = (a: number, b: number) =&gt; a + b;\nconsole.log(sum(2, 3));</code></pre>'
+            outputHtml="<pre><code>5</code></pre>"
+          />
+        </section>
+
+        <Separator />
+
+        {/* M2 Interactive Card Showcase (All 6 card types + variants) */}
+        <section aria-labelledby="kit-cards" className="space-y-6">
+          <div>
+            <h2 id="kit-cards" className="text-xl font-semibold tracking-tight">
+              All 6 Interactive Card Components
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Tab into any card and press <Kbd>Space</Kbd> to reveal,{" "}
+              <Kbd>K</Kbd> for Known, or <Kbd>R</Kbd> for Revisit.
+            </p>
+          </div>
+
+          <div className="mx-auto max-w-[var(--reading-max-width)] space-y-6">
+            {KIT_SAMPLE_CARDS.map((card) => (
+              <CardRenderer
+                key={card.id}
+                card={card}
+                status={cardStatuses[card.id]}
+                bookmarked={Boolean(cardBookmarks[card.id])}
+                onStatusChange={(next) =>
+                  setCardStatuses((prev) => ({ ...prev, [card.id]: next }))
+                }
+                onToggleBookmark={() =>
+                  setCardBookmarks((prev) => ({
+                    ...prev,
+                    [card.id]: !prev[card.id],
+                  }))
+                }
+                onSelectRelated={(id) =>
+                  toast.info(`Selected related card: ${id}`)
+                }
+                diagramSlot={
+                  card.type === "concept" ? (
+                    <div className="flex items-center justify-between gap-2 font-mono text-xs text-muted-foreground">
+                      <span>[ left ] ─── window ───▶ [ right ]</span>
+                      <span className="text-brand">O(n) invariant</span>
+                    </div>
+                  ) : undefined
+                }
+              />
+            ))}
           </div>
         </section>
       </main>
