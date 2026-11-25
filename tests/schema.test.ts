@@ -37,7 +37,15 @@ describe("handbook and chapter schemas", () => {
     expect(res.success).toBe(false)
   })
 
-  it("validates chapter.yml and rejects empty emoji", () => {
+  it("validates chapter.yml with icon or emoji and rejects empty/missing both", () => {
+    expect(
+      chapterYmlSchema.safeParse({
+        title: "Basics",
+        icon: "blocks",
+        description: "Core types",
+      }).success
+    ).toBe(true)
+
     expect(
       chapterYmlSchema.safeParse({
         title: "Basics",
@@ -50,6 +58,13 @@ describe("handbook and chapter schemas", () => {
       chapterYmlSchema.safeParse({
         title: "Basics",
         emoji: "",
+        description: "Core types",
+      }).success
+    ).toBe(false)
+
+    expect(
+      chapterYmlSchema.safeParse({
+        title: "Basics",
         description: "Core types",
       }).success
     ).toBe(false)

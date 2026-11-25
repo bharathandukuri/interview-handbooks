@@ -986,6 +986,7 @@ export async function loadAllHandbooks(
         dirName: chapterDirName,
         order: chapterOrder,
         title: chapterConfig.title,
+        icon: chapterConfig.icon,
         emoji: chapterConfig.emoji,
         description: chapterConfig.description,
         cardCount: cardFiles.length,

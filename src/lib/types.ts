@@ -17,7 +17,8 @@ export interface ChapterMeta {
   dirName: string
   order: number
   title: string
-  emoji: string
+  icon?: string
+  emoji?: string
   description: string
   cardCount: number
 }

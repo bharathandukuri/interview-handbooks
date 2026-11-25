@@ -13,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import { Kbd } from "@/components/ui/kbd"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -109,15 +110,23 @@ export function TopBar({
                           hb: handbook.id,
                           chapter: activeChapter.slug,
                         }}
-                        className="inline-flex max-w-[120px] items-center gap-1 truncate sm:max-w-[180px]"
+                        className="inline-flex max-w-[120px] items-center gap-1.5 truncate sm:max-w-[180px]"
                       >
-                        <span aria-hidden="true">{activeChapter.emoji}</span>
+                        <ChapterIcon
+                          icon={activeChapter.icon}
+                          emoji={activeChapter.emoji}
+                          className="size-3.5 text-muted-foreground"
+                        />
                         <span className="truncate">{activeChapter.title}</span>
                       </Link>
                     </BreadcrumbLink>
                   ) : (
                     <BreadcrumbPage className="inline-flex items-center gap-1.5 truncate font-medium">
-                      <span aria-hidden="true">{activeChapter.emoji}</span>
+                      <ChapterIcon
+                        icon={activeChapter.icon}
+                        emoji={activeChapter.emoji}
+                        className="size-3.5 text-brand"
+                      />
                       <span className="truncate">{activeChapter.title}</span>
                     </BreadcrumbPage>
                   )}

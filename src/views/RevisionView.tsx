@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { Flame, Printer, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import { getCardsForChapter } from "@/lib/selectors"
@@ -128,7 +129,11 @@ export function RevisionView({ bundle }: RevisionViewProps) {
             >
               <div className="mb-3 flex items-center justify-between gap-2 border-b border-border pb-2.5">
                 <h2 className="flex items-center gap-2 font-heading text-base font-semibold">
-                  <span aria-hidden="true">{chapter.emoji}</span>
+                  <ChapterIcon
+                    icon={chapter.icon}
+                    emoji={chapter.emoji}
+                    className="size-4 text-brand"
+                  />
                   <span>{chapter.title}</span>
                 </h2>
                 <span className="font-mono text-xs text-text-faint tabular-nums">

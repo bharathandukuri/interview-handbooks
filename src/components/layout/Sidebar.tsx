@@ -7,6 +7,7 @@ import {
   Home,
   Zap,
 } from "lucide-react"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import {
   Collapsible,
   CollapsibleContent,
@@ -185,19 +186,22 @@ export function HandbookSidebar({
                       <SidebarMenuButton
                         asChild
                         isActive={isCurrentChapter}
-                        tooltip={`${ch.emoji} ${ch.title} (${counts.known}/${counts.total})`}
+                        tooltip={`${ch.title} (${counts.known}/${counts.total})`}
                       >
                         <Link
                           to="/$hb/c/$chapter"
                           params={{ hb: handbook.id, chapter: ch.slug }}
                           onClick={closeMobileIfNeeded}
                         >
-                          <span
-                            className="flex size-4 shrink-0 items-center justify-center text-sm leading-none"
-                            aria-hidden="true"
-                          >
-                            {ch.emoji}
-                          </span>
+                          <ChapterIcon
+                            icon={ch.icon}
+                            emoji={ch.emoji}
+                            className={
+                              isCurrentChapter
+                                ? "text-brand"
+                                : "text-muted-foreground"
+                            }
+                          />
                           <span>{ch.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -227,12 +231,15 @@ export function HandbookSidebar({
                             onClick={closeMobileIfNeeded}
                             className="min-w-0"
                           >
-                            <span
-                              className="flex size-4 shrink-0 items-center justify-center text-sm leading-none"
-                              aria-hidden="true"
-                            >
-                              {ch.emoji}
-                            </span>
+                            <ChapterIcon
+                              icon={ch.icon}
+                              emoji={ch.emoji}
+                              className={
+                                isCurrentChapter && !activeCardId
+                                  ? "text-brand"
+                                  : "text-muted-foreground"
+                              }
+                            />
                             <span className="min-w-0 flex-1 truncate">
                               {ch.title}
                             </span>

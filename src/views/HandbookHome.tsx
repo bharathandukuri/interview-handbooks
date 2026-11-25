@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, Flame, History, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { HandbookIcon } from "@/components/ui/handbook-icon"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
@@ -92,8 +93,13 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                 {lastCardChapter && (
                   <>
                     <span>·</span>
-                    <span className="truncate">
-                      {lastCardChapter.emoji} {lastCardChapter.title}
+                    <span className="inline-flex min-w-0 items-center gap-1 truncate">
+                      <ChapterIcon
+                        icon={lastCardChapter.icon}
+                        emoji={lastCardChapter.emoji}
+                        className="size-3.5 text-muted-foreground"
+                      />
+                      <span className="truncate">{lastCardChapter.title}</span>
                     </span>
                   </>
                 )}
@@ -193,8 +199,19 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                   </div>
 
                   <div className="flex items-center justify-between font-mono text-[11px] text-text-faint">
-                    <span className="truncate">
-                      {ch ? `${ch.emoji} ${ch.title}` : card.chapter}
+                    <span className="inline-flex min-w-0 items-center gap-1.5 truncate">
+                      {ch ? (
+                        <>
+                          <ChapterIcon
+                            icon={ch.icon}
+                            emoji={ch.emoji}
+                            className="size-3.5 text-muted-foreground"
+                          />
+                          <span className="truncate">{ch.title}</span>
+                        </>
+                      ) : (
+                        card.chapter
+                      )}
                     </span>
                     <ArrowRight
                       className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand"
@@ -232,9 +249,11 @@ export function HandbookHome({ bundle }: HandbookHomeProps) {
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-base" aria-hidden="true">
-                        {chapter.emoji}
-                      </span>
+                      <ChapterIcon
+                        icon={chapter.icon}
+                        emoji={chapter.emoji}
+                        className="size-4 text-brand"
+                      />
                       <h3 className="font-heading text-base font-semibold tracking-tight group-hover:text-brand">
                         {chapter.title}
                       </h3>

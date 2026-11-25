@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { FilterBar } from "@/components/features/FilterBar"
 import { Button } from "@/components/ui/button"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
 import { Progress } from "@/components/ui/progress"
@@ -56,8 +57,12 @@ export function ChapterView({
       <header className="rounded-2xl border border-border bg-surface p-6 shadow-(--shadow-card)">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2.5">
-            <span className="text-2xl" aria-hidden="true">
-              {chapter.emoji}
+            <span className="flex size-8 items-center justify-center rounded-lg border border-border bg-surface-2">
+              <ChapterIcon
+                icon={chapter.icon}
+                emoji={chapter.emoji}
+                className="size-4.5 text-brand"
+              />
             </span>
             <h1 className="font-heading text-2xl font-semibold tracking-tight">
               {chapter.title}

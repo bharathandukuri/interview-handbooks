@@ -44,11 +44,22 @@ export const handbookYmlSchema = z.object({
   chapters: z.array(z.string().trim().min(1)).min(1),
 })
 
-export const chapterYmlSchema = z.object({
-  title: z.string().trim().min(1, "cannot be empty"),
-  emoji: z.string().trim().min(1, "cannot be empty"),
-  description: z.string().trim().min(1, "cannot be empty"),
-})
+export const chapterYmlSchema = z
+  .object({
+    title: z.string().trim().min(1, "cannot be empty"),
+    icon: z.string().trim().min(1, "cannot be empty").optional(),
+    emoji: z.string().trim().min(1, "cannot be empty").optional(),
+    description: z.string().trim().min(1, "cannot be empty"),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.icon && !data.emoji) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["icon"],
+        message: "must provide either icon or emoji",
+      })
+    }
+  })
 
 const commonCardFields = {
   title: z.string().trim().min(1, "cannot be empty"),

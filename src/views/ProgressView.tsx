@@ -14,6 +14,7 @@ import { ProgressBar } from "@/components/features/ProgressBar"
 import { ProgressRing } from "@/components/features/ProgressRing"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import {
   Dialog,
   DialogContent,
@@ -183,9 +184,14 @@ export function ProgressView({ bundle }: ProgressViewProps) {
                   <Link
                     to="/$hb/c/$chapter"
                     params={{ hb: bundle.handbook.id, chapter: chapter.slug }}
-                    className="font-medium hover:text-brand"
+                    className="inline-flex items-center gap-2 font-medium hover:text-brand"
                   >
-                    {chapter.emoji} {chapter.title}
+                    <ChapterIcon
+                      icon={chapter.icon}
+                      emoji={chapter.emoji}
+                      className="size-4 text-muted-foreground"
+                    />
+                    <span>{chapter.title}</span>
                   </Link>
                   <div className="flex items-center gap-2 font-mono text-xs tabular-nums">
                     {counts.revisit > 0 && (

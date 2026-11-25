@@ -4,7 +4,6 @@ import { useNavigate, useParams, useRouterState } from "@tanstack/react-router"
 import {
   BarChart3,
   Bookmark,
-  BookOpen,
   Home,
   Keyboard,
   Palette,
@@ -19,6 +18,7 @@ import {
   SearchResults,
   type SearchCardEntry,
 } from "@/components/features/SearchResults"
+import { ChapterIcon } from "@/components/ui/chapter-icon"
 import {
   Command,
   CommandDialog,
@@ -306,12 +306,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                       })
                     }}
                   >
-                    <BookOpen
+                    <ChapterIcon
+                      icon={ch.icon}
+                      emoji={ch.emoji}
                       className="size-4 text-muted-foreground"
-                      aria-hidden="true"
                     />
                     <span className="flex-1 truncate">
-                      {ch.emoji} <HighlightedText segments={titleSegments} />
+                      <HighlightedText segments={titleSegments} />
                     </span>
                     <span className="font-mono text-xs text-muted-foreground">
                       {ch.cardCount} cards
