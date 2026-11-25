@@ -34,6 +34,7 @@ export interface CardSharedProps {
   revealed?: boolean
   relatedCards?: RelatedCardInfo[]
   enableGlobalHotkeys?: boolean
+  headingAs?: "h1" | "h2"
   onStatusChange?: (nextStatus: CardStatus | undefined) => void
   onToggleBookmark?: () => void
   onRevealChange?: (revealed: boolean) => void
@@ -48,7 +49,6 @@ interface CardShellProps extends Omit<
 > {
   children: ReactNode
   onRevealKey?: () => void
-  headingAs?: "h1" | "h2"
 }
 
 const TYPE_META: Record<CardType, { label: string; icon: typeof HelpCircle }> =

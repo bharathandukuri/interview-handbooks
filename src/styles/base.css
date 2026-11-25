@@ -73,6 +73,10 @@
     outline: 2px solid var(--accent-ring);
     outline-offset: 2px;
   }
+
+  [id^="section-"] {
+    scroll-margin-top: 5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

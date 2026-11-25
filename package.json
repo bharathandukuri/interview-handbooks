@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:single": "cross-env HANDBOOK=python vite build --mode single",
+    "build": "tsc -b && cross-env TOKIO_WORKER_THREADS=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 vite build",
+    "build:single": "cross-env HANDBOOK=python TOKIO_WORKER_THREADS=1 RAYON_NUM_THREADS=1 UV_THREADPOOL_SIZE=1 vite build --mode single",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc -b",

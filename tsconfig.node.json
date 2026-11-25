@@ -28,6 +28,8 @@
     "vitest.config.ts",
     "plugins/**/*.ts",
     "src/lib/schema.ts",
+    "src/lib/search-params.ts",
+    "src/lib/selectors.ts",
     "src/lib/types.ts",
     "tests/**/*.ts"
   ]

@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useState } from "react"
 import { useFormatForDisplay } from "@tanstack/react-hotkeys"
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, useParams } from "@tanstack/react-router"
 import Fuse from "fuse.js"
 import {
   AlertTriangle,
+  BarChart3,
+  Bookmark,
   BookOpen,
   Code2,
   Columns2,
   Eye,
   HelpCircle,
   Home,
+  Layers,
   Lightbulb,
   Palette,
   SunMoon,
+  Zap,
 } from "lucide-react"
-import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import {
   Command,
@@ -57,9 +60,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const [entries, setEntries] = useState<SearchEntryWithHandbook[]>([])
   const [loaded, setLoaded] = useState(false)
   const navigate = useNavigate()
+  const params = useParams({ strict: false }) as { hb?: string }
   const toggleTheme = useSettingsStore((s) => s.toggleTheme)
   const formatForDisplay = useFormatForDisplay()
   const handbooks = useMemo(() => getHandbooksMeta(), [])
+  const activeHbId = params.hb ?? handbooks[0]?.id
 
   useEffect(() => {
     if (!open || loaded) return
@@ -132,6 +137,71 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   }, [handbooks, trimmed])
 
   const actions = useMemo(() => {
+    const hbActions = activeHbId
+      ? [
+          {
+            id: "go-home",
+            label: "Go to handbook home",
+            shortcut: formatForDisplay(["G", "H"]),
+            icon: Home,
+            run: () =>
+              void navigate({ to: "/$hb", params: { hb: activeHbId } }),
+          },
+          {
+            id: "go-flashcards",
+            label: "Open flashcards",
+            shortcut: undefined,
+            icon: Layers,
+            run: () =>
+              void navigate({
+                to: "/$hb/flashcards",
+                params: { hb: activeHbId },
+              }),
+          },
+          {
+            id: "go-revision",
+            label: "Open quick revision",
+            shortcut: undefined,
+            icon: Zap,
+            run: () =>
+              void navigate({
+                to: "/$hb/revision",
+                params: { hb: activeHbId },
+              }),
+          },
+          {
+            id: "go-progress",
+            label: "View progress",
+            shortcut: undefined,
+            icon: BarChart3,
+            run: () =>
+              void navigate({
+                to: "/$hb/progress",
+                params: { hb: activeHbId },
+              }),
+          },
+          {
+            id: "go-bookmarks",
+            label: "Open bookmarks",
+            shortcut: undefined,
+            icon: Bookmark,
+            run: () =>
+              void navigate({
+                to: "/$hb/bookmarks",
+                params: { hb: activeHbId },
+              }),
+          },
+        ]
+      : [
+          {
+            id: "go-home",
+            label: "Go to home",
+            shortcut: formatForDisplay(["G", "H"]),
+            icon: Home,
+            run: () => void navigate({ to: "/" }),
+          },
+        ]
+
     const list = [
       {
         id: "toggle-theme",
@@ -140,13 +210,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: SunMoon,
         run: () => toggleTheme(),
       },
-      {
-        id: "go-home",
-        label: "Go to home",
-        shortcut: formatForDisplay(["G", "H"]),
-        icon: Home,
-        run: () => void navigate({ to: "/" }),
-      },
+      ...hbActions,
       ...(import.meta.env.DEV
         ? [
             {
@@ -162,7 +226,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     if (!trimmed) return list
     const lower = trimmed.toLowerCase()
     return list.filter((a) => a.label.toLowerCase().includes(lower))
-  }, [formatForDisplay, navigate, toggleTheme, trimmed])
+  }, [activeHbId, formatForDisplay, navigate, toggleTheme, trimmed])
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) setQuery("")
@@ -199,8 +263,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     value={card.id}
                     onSelect={() => {
                       handleOpenChange(false)
-                      toast.info(card.title, {
-                        description: `${card.chapterTitle} · ${card.difficulty} (${card.id}) — full card reader arrives in M3/M4`,
+                      void navigate({
+                        to: "/$hb/t/$cardId",
+                        params: { hb: card.handbookId, cardId: card.id },
                       })
                     }}
                   >
@@ -228,8 +293,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     value={`${ch.handbookId}.${ch.slug}`}
                     onSelect={() => {
                       handleOpenChange(false)
-                      toast.info(`${ch.emoji} ${ch.title}`, {
-                        description: `${ch.cardCount} cards — chapter view arrives in M3/M4`,
+                      void navigate({
+                        to: "/$hb/c/$chapter",
+                        params: { hb: ch.handbookId, chapter: ch.slug },
                       })
                     }}
                   >

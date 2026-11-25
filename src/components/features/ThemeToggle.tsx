@@ -75,7 +75,7 @@ export function ThemeToggle() {
             className="gap-1.5 text-xs text-muted-foreground"
           >
             <span className="capitalize">{theme}</span>
-            <Kbd>{shortcutLabel}</Kbd>
+            <Kbd className="hidden sm:inline-flex">{shortcutLabel}</Kbd>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">

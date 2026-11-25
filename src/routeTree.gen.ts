@@ -10,11 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HbRouteImport } from './routes/$hb'
 import { Route as KitRouteImport } from './routes/[_]kit'
+import { Route as HbIndexRouteImport } from './routes/$hb/index'
+import { Route as HbBookmarksRouteImport } from './routes/$hb/bookmarks'
+import { Route as HbFlashcardsRouteImport } from './routes/$hb/flashcards'
+import { Route as HbProgressRouteImport } from './routes/$hb/progress'
+import { Route as HbRevisionRouteImport } from './routes/$hb/revision'
+import { Route as HbCChapterRouteImport } from './routes/$hb/c.$chapter'
+import { Route as HbTCardIdRouteImport } from './routes/$hb/t.$cardId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HbRoute = HbRouteImport.update({
+  id: '/$hb',
+  path: '/$hb',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KitRoute = KitRouteImport.update({
@@ -22,30 +35,119 @@ const KitRoute = KitRouteImport.update({
   path: '/_kit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HbIndexRoute = HbIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbBookmarksRoute = HbBookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbFlashcardsRoute = HbFlashcardsRouteImport.update({
+  id: '/flashcards',
+  path: '/flashcards',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbProgressRoute = HbProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbRevisionRoute = HbRevisionRouteImport.update({
+  id: '/revision',
+  path: '/revision',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbCChapterRoute = HbCChapterRouteImport.update({
+  id: '/c/$chapter',
+  path: '/c/$chapter',
+  getParentRoute: () => HbRoute,
+} as any)
+const HbTCardIdRoute = HbTCardIdRouteImport.update({
+  id: '/t/$cardId',
+  path: '/t/$cardId',
+  getParentRoute: () => HbRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$hb': typeof HbRouteWithChildren
   '/_kit': typeof KitRoute
+  '/$hb/bookmarks': typeof HbBookmarksRoute
+  '/$hb/flashcards': typeof HbFlashcardsRoute
+  '/$hb/progress': typeof HbProgressRoute
+  '/$hb/revision': typeof HbRevisionRoute
+  '/$hb/': typeof HbIndexRoute
+  '/$hb/c/$chapter': typeof HbCChapterRoute
+  '/$hb/t/$cardId': typeof HbTCardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/_kit': typeof KitRoute
+  '/$hb/bookmarks': typeof HbBookmarksRoute
+  '/$hb/flashcards': typeof HbFlashcardsRoute
+  '/$hb/progress': typeof HbProgressRoute
+  '/$hb/revision': typeof HbRevisionRoute
+  '/$hb': typeof HbIndexRoute
+  '/$hb/c/$chapter': typeof HbCChapterRoute
+  '/$hb/t/$cardId': typeof HbTCardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$hb': typeof HbRouteWithChildren
   '/_kit': typeof KitRoute
+  '/$hb/bookmarks': typeof HbBookmarksRoute
+  '/$hb/flashcards': typeof HbFlashcardsRoute
+  '/$hb/progress': typeof HbProgressRoute
+  '/$hb/revision': typeof HbRevisionRoute
+  '/$hb/': typeof HbIndexRoute
+  '/$hb/c/$chapter': typeof HbCChapterRoute
+  '/$hb/t/$cardId': typeof HbTCardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/_kit'
+  fullPaths:
+    | '/'
+    | '/$hb'
+    | '/_kit'
+    | '/$hb/bookmarks'
+    | '/$hb/flashcards'
+    | '/$hb/progress'
+    | '/$hb/revision'
+    | '/$hb/'
+    | '/$hb/c/$chapter'
+    | '/$hb/t/$cardId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/_kit'
-  id: '__root__' | '/' | '/_kit'
+  to:
+    | '/'
+    | '/_kit'
+    | '/$hb/bookmarks'
+    | '/$hb/flashcards'
+    | '/$hb/progress'
+    | '/$hb/revision'
+    | '/$hb'
+    | '/$hb/c/$chapter'
+    | '/$hb/t/$cardId'
+  id:
+    | '__root__'
+    | '/'
+    | '/$hb'
+    | '/_kit'
+    | '/$hb/bookmarks'
+    | '/$hb/flashcards'
+    | '/$hb/progress'
+    | '/$hb/revision'
+    | '/$hb/'
+    | '/$hb/c/$chapter'
+    | '/$hb/t/$cardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HbRoute: typeof HbRouteWithChildren
   KitRoute: typeof KitRoute
 }
 
@@ -58,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$hb': {
+      id: '/$hb'
+      path: '/$hb'
+      fullPath: '/$hb'
+      preLoaderRoute: typeof HbRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_kit': {
       id: '/_kit'
       path: '/_kit'
@@ -65,11 +174,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$hb/': {
+      id: '/$hb/'
+      path: '/'
+      fullPath: '/$hb/'
+      preLoaderRoute: typeof HbIndexRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/bookmarks': {
+      id: '/$hb/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/$hb/bookmarks'
+      preLoaderRoute: typeof HbBookmarksRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/flashcards': {
+      id: '/$hb/flashcards'
+      path: '/flashcards'
+      fullPath: '/$hb/flashcards'
+      preLoaderRoute: typeof HbFlashcardsRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/progress': {
+      id: '/$hb/progress'
+      path: '/progress'
+      fullPath: '/$hb/progress'
+      preLoaderRoute: typeof HbProgressRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/revision': {
+      id: '/$hb/revision'
+      path: '/revision'
+      fullPath: '/$hb/revision'
+      preLoaderRoute: typeof HbRevisionRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/c/$chapter': {
+      id: '/$hb/c/$chapter'
+      path: '/c/$chapter'
+      fullPath: '/$hb/c/$chapter'
+      preLoaderRoute: typeof HbCChapterRouteImport
+      parentRoute: typeof HbRoute
+    }
+    '/$hb/t/$cardId': {
+      id: '/$hb/t/$cardId'
+      path: '/t/$cardId'
+      fullPath: '/$hb/t/$cardId'
+      preLoaderRoute: typeof HbTCardIdRouteImport
+      parentRoute: typeof HbRoute
+    }
   }
 }
 
+interface HbRouteChildren {
+  HbBookmarksRoute: typeof HbBookmarksRoute
+  HbFlashcardsRoute: typeof HbFlashcardsRoute
+  HbProgressRoute: typeof HbProgressRoute
+  HbRevisionRoute: typeof HbRevisionRoute
+  HbIndexRoute: typeof HbIndexRoute
+  HbCChapterRoute: typeof HbCChapterRoute
+  HbTCardIdRoute: typeof HbTCardIdRoute
+}
+
+const HbRouteChildren: HbRouteChildren = {
+  HbBookmarksRoute: HbBookmarksRoute,
+  HbFlashcardsRoute: HbFlashcardsRoute,
+  HbProgressRoute: HbProgressRoute,
+  HbRevisionRoute: HbRevisionRoute,
+  HbIndexRoute: HbIndexRoute,
+  HbCChapterRoute: HbCChapterRoute,
+  HbTCardIdRoute: HbTCardIdRoute,
+}
+
+const HbRouteWithChildren = HbRoute._addFileChildren(HbRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HbRoute: HbRouteWithChildren,
   KitRoute: KitRoute,
 }
 export const routeTree = rootRouteImport
