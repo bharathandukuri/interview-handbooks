@@ -1,8 +1,8 @@
 import { Fragment } from "react"
 import { useFormatForDisplay } from "@tanstack/react-hotkeys"
 import { Link } from "@tanstack/react-router"
-import { Search } from "lucide-react"
-import { useCommandPalette } from "@/app/providers"
+import { Keyboard, Search } from "lucide-react"
+import { useCommandPalette, useShortcutsDialog } from "@/app/providers"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
 import {
   Breadcrumb,
@@ -16,7 +16,12 @@ import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { appHotkeys } from "@/lib/keyboard"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { appHotkeys, formatHotkeyLabel } from "@/lib/keyboard"
 import { stripInlineCode } from "@/lib/text"
 import type { Card, ChapterMeta, HandbookBundle } from "@/lib/types"
 
@@ -34,12 +39,18 @@ export function TopBar({
   sectionLabel,
 }: TopBarProps) {
   const { openPalette } = useCommandPalette()
+  const { openShortcuts } = useShortcutsDialog()
   const formatForDisplay = useFormatForDisplay()
   const { handbook } = bundle
 
   const isRootHome = !activeChapter && !activeCard && !sectionLabel
-  const shortcutLabel = formatForDisplay(
-    appHotkeys["palette.open"].hotkey ?? "Mod+K"
+  const shortcutLabel = formatHotkeyLabel(
+    appHotkeys["palette.open"].hotkey ?? "Mod+K",
+    formatForDisplay
+  )
+  const shortcutsDialogLabel = formatHotkeyLabel(
+    appHotkeys["shortcuts.open"].hotkey ?? "Shift+/",
+    formatForDisplay
   )
 
   return (
@@ -143,6 +154,25 @@ export function TopBar({
           </span>
           <Kbd className="hidden sm:inline-flex">{shortcutLabel}</Kbd>
         </Button>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={openShortcuts}
+              aria-label={`Keyboard shortcuts (${shortcutsDialogLabel})`}
+              className="h-8 w-8 justify-center bg-surface-2 px-0 text-muted-foreground hover:border-[var(--accent-ring)] hover:text-foreground sm:h-9 sm:w-9"
+            >
+              <Keyboard className="size-4" aria-hidden="true" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="flex items-center gap-1.5">
+            <span>Keyboard shortcuts</span>
+            <Kbd>{shortcutsDialogLabel}</Kbd>
+          </TooltipContent>
+        </Tooltip>
 
         <ThemeToggle />
       </div>

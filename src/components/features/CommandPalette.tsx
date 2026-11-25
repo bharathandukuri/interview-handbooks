@@ -6,12 +6,14 @@ import {
   Bookmark,
   BookOpen,
   Home,
+  Keyboard,
   Palette,
   RotateCcw,
   SunMoon,
   Zap,
 } from "lucide-react"
 import { toast } from "sonner"
+import { useShortcutsDialog } from "@/app/providers"
 import { HighlightedText } from "@/components/features/HighlightedText"
 import {
   SearchResults,
@@ -30,7 +32,7 @@ import {
 } from "@/components/ui/command"
 import { Kbd } from "@/components/ui/kbd"
 import { getHandbooksMeta, loadHandbookSearch } from "@/lib/content"
-import { appHotkeys } from "@/lib/keyboard"
+import { appHotkeys, formatHotkeyLabel } from "@/lib/keyboard"
 import {
   createSearchIndex,
   highlightSubstring,
@@ -57,6 +59,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     }),
   })
   const toggleTheme = useSettingsStore((s) => s.toggleTheme)
+  const { openShortcuts } = useShortcutsDialog()
   const formatForDisplay = useFormatForDisplay()
   const handbooks = useMemo(() => getHandbooksMeta(), [])
   const activeHbId = params.hb ?? handbooks[0]?.id
@@ -189,9 +192,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       {
         id: "toggle-theme",
         label: "Toggle color theme",
-        shortcut: formatForDisplay(appHotkeys["theme.toggle"].hotkey ?? "D"),
+        shortcut: formatHotkeyLabel(
+          appHotkeys["theme.toggle"].hotkey ?? "D",
+          formatForDisplay
+        ),
         icon: SunMoon,
         run: () => toggleTheme(),
+      },
+      {
+        id: "open-shortcuts",
+        label: "Keyboard shortcuts",
+        shortcut: formatHotkeyLabel(
+          appHotkeys["shortcuts.open"].hotkey ?? "Shift+/",
+          formatForDisplay
+        ),
+        icon: Keyboard,
+        run: () => openShortcuts(),
       },
       ...(hasActiveSearch
         ? [
@@ -233,6 +249,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     formatForDisplay,
     hasActiveSearch,
     navigate,
+    openShortcuts,
     query,
     toggleTheme,
   ])

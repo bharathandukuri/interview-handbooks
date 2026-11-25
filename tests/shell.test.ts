@@ -12,7 +12,7 @@ import {
 } from "../src/lib/selectors.ts"
 import type { HandbookBundle } from "../src/lib/types.ts"
 import { splitInlineCode, stripInlineCode } from "../src/lib/text.ts"
-import { formatHotkeyLabel } from "../src/lib/keyboard.ts"
+import { formatHotkeyLabel, getShortcutGroups } from "../src/lib/keyboard.ts"
 
 const mockBundle: HandbookBundle = {
   handbook: {
@@ -243,10 +243,27 @@ describe("inline code title formatting", () => {
 })
 
 describe("keyboard shortcut labels", () => {
-  it("renders readable labels for Space, ArrowLeft, ArrowRight, and Mod+K", () => {
+  it("renders readable labels for Space, ArrowLeft, ArrowRight, Shift+/, and Mod+K", () => {
     expect(formatHotkeyLabel("Space", () => " ")).toBe("Space")
     expect(formatHotkeyLabel("ArrowLeft", () => "Left")).toBe("←")
     expect(formatHotkeyLabel("ArrowRight", () => "Right")).toBe("→")
+    expect(formatHotkeyLabel("Shift+/", () => "Shift+/")).toBe("?")
     expect(formatHotkeyLabel("Mod+K", () => "Ctrl+K")).toBe("Ctrl+K")
+  })
+
+  it("builds grouped shortcuts including Global & navigation and Card reader actions", () => {
+    const groups = getShortcutGroups()
+    expect(groups.map((g) => g.id)).toEqual(["global", "card"])
+    expect(groups[0]?.items.map((i) => i.id)).toContain("shortcuts.open")
+    expect(groups[1]?.items.map((i) => i.id)).toEqual(
+      expect.arrayContaining([
+        "card.reveal",
+        "card.known",
+        "card.revisit",
+        "card.prev",
+        "card.next",
+        "card.back",
+      ])
+    )
   })
 })

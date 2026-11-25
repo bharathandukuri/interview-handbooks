@@ -259,4 +259,37 @@ test.describe("Interview Handbooks smoke flow", () => {
       page.getByRole("heading", { level: 1, name: "Python Basics" })
     ).toBeVisible()
   })
+
+  test("opens Keyboard shortcuts dialog from navbar button and ? shortcut", async ({
+    page,
+  }) => {
+    await page.goto("/#/python")
+
+    const shortcutsBtn = page.getByRole("button", {
+      name: /Keyboard shortcuts \(\?\)/i,
+    })
+    await expect(shortcutsBtn).toBeVisible()
+    await shortcutsBtn.click()
+
+    const dialog = page.getByRole("dialog", { name: /Keyboard shortcuts/i })
+    await expect(dialog).toBeVisible()
+    await expect(
+      dialog.getByText("Global & navigation", { exact: true })
+    ).toBeVisible()
+    await expect(dialog.getByText("Card reader", { exact: true })).toBeVisible()
+    await expect(
+      dialog.getByText("Back to chapter", { exact: true })
+    ).toBeVisible()
+    await expect(
+      dialog.getByText("Previous card", { exact: true })
+    ).toBeVisible()
+    await expect(dialog.getByText("Next card", { exact: true })).toBeVisible()
+
+    // Escape closes dialog, ? reopens it
+    await page.keyboard.press("Escape")
+    await expect(dialog).toBeHidden()
+
+    await page.keyboard.press("?")
+    await expect(dialog).toBeVisible()
+  })
 })
