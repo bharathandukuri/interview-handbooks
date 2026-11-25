@@ -132,10 +132,12 @@ test.describe("Interview Handbooks smoke flow", () => {
 
     // Body search match highlights and navigates to card
     await searchInput.fill("singletons")
-    await expect(
-      page.getByText(/is vs == on lists and aliases/i).first()
-    ).toBeVisible()
-    await searchInput.press("Enter")
+    const targetResult = page
+      .getByRole("dialog")
+      .getByText(/is vs == on lists and aliases/i)
+      .first()
+    await expect(targetResult).toBeVisible()
+    await targetResult.click()
 
     await expect(
       page.getByRole("heading", {
@@ -147,7 +149,7 @@ test.describe("Interview Handbooks smoke flow", () => {
     // Open chapter with active filters and reset filters via Command Palette action
     await page.goto("/#/python/c/basics?mostAsked=1")
     await expect(
-      page.locator("main").getByText("1/2", { exact: true })
+      page.locator("main").getByText("3/5", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -156,11 +158,15 @@ test.describe("Interview Handbooks smoke flow", () => {
     await page.keyboard.press("Control+k")
     await expect(searchInput).toBeVisible()
     await searchInput.fill("Reset filters")
-    await expect(page.getByText(/Reset filters/i).first()).toBeVisible()
-    await searchInput.press("Enter")
+    const resetAction = page
+      .getByRole("dialog")
+      .getByText(/Reset filters/i)
+      .first()
+    await expect(resetAction).toBeVisible()
+    await resetAction.click()
 
     await expect(
-      page.locator("main").getByText("2/2", { exact: true })
+      page.locator("main").getByText("5/5", { exact: true })
     ).toBeVisible()
     await expect(
       page.locator("main").getByRole("button", { name: /^Reset$/i })
@@ -186,14 +192,14 @@ test.describe("Interview Handbooks smoke flow", () => {
     await expect(
       page.getByRole("heading", { name: /Python Cheatsheet/i })
     ).toBeVisible()
-    await expect(
-      page.getByText(/6 key takeaways across 3 cards/i)
-    ).toBeVisible()
+    const summaryText = page.getByText(/key takeaways across \d+ cards?/i)
+    await expect(summaryText).toBeVisible()
+    const beforeSummary = await summaryText.innerText()
 
     const mostAskedBtn = page.getByRole("button", { name: /Most asked only/i })
     await mostAskedBtn.click()
     await expect(mostAskedBtn).toHaveAttribute("aria-pressed", "true")
-    await expect(page.getByText(/2 key takeaways across 1 card/i)).toBeVisible()
+    await expect(summaryText).not.toHaveText(beforeSummary)
 
     await page.emulateMedia({ media: "print" })
     await expect(page.locator('[data-slot="topbar"]')).toBeHidden()

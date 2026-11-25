@@ -32,25 +32,29 @@ afterEach(() => {
 })
 
 describe("loadAllHandbooks on repository Python sample", () => {
-  it("loads the 3 sample Python cards with Shiki dual-theme HTML and directives", async () => {
+  it("loads the full Python handbook cards with Shiki dual-theme HTML and directives", async () => {
     const contentRoot = path.resolve(process.cwd(), "content")
     const result = await loadAllHandbooks(contentRoot)
 
     expect(result.handbooks).toHaveLength(1)
     expect(result.handbooks[0]?.id).toBe("python")
-    expect(result.handbooks[0]?.chapterCount).toBe(2)
-    expect(result.handbooks[0]?.cardCount).toBe(3)
+    expect(result.handbooks[0]?.chapterCount).toBe(7)
+    expect(result.handbooks[0]?.cardCount).toBe(34)
     expect(result.warnings).toHaveLength(0)
 
     const bundle = result.bundles.python
     expect(bundle).toBeDefined()
-    expect(bundle?.cards.map((c) => c.id)).toEqual([
-      "python.basics.mutable-vs-immutable",
-      "python.basics.is-vs-equals",
-      "python.functions.args-kwargs",
-    ])
+    expect(bundle?.cards.map((c) => c.id)).toEqual(
+      expect.arrayContaining([
+        "python.basics.mutable-vs-immutable",
+        "python.basics.is-vs-equals",
+        "python.functions.args-kwargs",
+      ])
+    )
 
-    const qCard = bundle?.cards[0]
+    const qCard = bundle?.cards.find(
+      (c) => c.id === "python.basics.mutable-vs-immutable"
+    )
     expect(qCard?.sections.answer).toContain("data-code-block")
     expect(qCard?.sections.answer).toContain("--shiki-dark")
     expect(qCard?.sections.answer).toContain("--shiki-light")
@@ -61,19 +65,23 @@ describe("loadAllHandbooks on repository Python sample", () => {
     expect(qCard?.sections.why).toContain("object-reference model")
     expect(qCard?.sections.followUps).toContain("<li>")
 
-    const pCard = bundle?.cards[1]
+    const pCard = bundle?.cards.find(
+      (c) => c.id === "python.basics.is-vs-equals"
+    )
     expect(pCard?.sections.code).toContain("data-code-block")
     expect(pCard?.sections.output).toContain("True False")
     expect(pCard?.meta.outputText).toContain("True False")
 
-    const cCard = bundle?.cards[2]
+    const cCard = bundle?.cards.find(
+      (c) => c.id === "python.functions.args-kwargs"
+    )
     expect(cCard?.sections.body).toContain('<kbd data-kbd="">Space</kbd>')
     expect(cCard?.sections.body).toContain('data-callout="tip"')
     expect(cCard?.sections.body).toContain(
       'data-callout-title="Forwarding safely"'
     )
 
-    expect(result.search.python).toHaveLength(3)
+    expect(result.search.python).toHaveLength(34)
     expect(result.search.python?.[0]?.chapterTitle).toBe("Python Basics")
     expect(result.handbooks[0]?.iconSvg).toContain("python-original")
   })

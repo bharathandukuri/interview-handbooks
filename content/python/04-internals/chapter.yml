@@ -1,0 +1,3 @@
+title: CPython Internals & Memory
+icon: cpu
+description: The GIL, reference counting, garbage collection, and dict internals.

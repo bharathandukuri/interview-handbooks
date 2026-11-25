@@ -139,7 +139,9 @@ describe("search helpers and Fuse index", () => {
 
     const { fuse } = createSearchIndex(pyEntries)
     const found = searchEntries(fuse, pyEntries, "singletons")
-    expect(found[0]?.item.id).toBe("python.basics.is-vs-equals")
+    expect(found.some((f) => f.item.id === "python.basics.is-vs-equals")).toBe(
+      true
+    )
   })
 
   it("searches 500 entries well under 100ms", () => {

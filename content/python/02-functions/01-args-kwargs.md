@@ -23,6 +23,8 @@ log("INFO", "started", port=8080)
 
 At a call site, the same stars **unpack** a sequence or mapping back into individual arguments: `fn(*pair, **opts)`.
 
+Python 3.8+ also lets you lock down how parameters are passed using `/` (positional-only before it) and `*` (keyword-only after it): `def api(id, /, *, strict=True):`.
+
 :::tip[Forwarding safely]
 Use `def wrapper(*args, **kwargs):` when writing decorators so any wrapped function signature passes straight through. Press :kbd[Space] when practicing question cards to test yourself first.
 :::
