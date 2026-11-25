@@ -3,12 +3,11 @@ import { useHotkey } from "@tanstack/react-hotkeys"
 import { useNavigate, useParams, useRouterState } from "@tanstack/react-router"
 import { MobileNav } from "@/components/layout/MobileNav"
 import { HandbookSidebar } from "@/components/layout/Sidebar"
-import { TocPanel } from "@/components/layout/TocPanel"
 import { TopBar } from "@/components/layout/TopBar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { appHotkeys } from "@/lib/keyboard"
 import type { HandbookBundle } from "@/lib/types"
-import { applyHandbookAccent, cn, resetHandbookAccent } from "@/lib/utils"
+import { applyHandbookAccent, resetHandbookAccent } from "@/lib/utils"
 import {
   DEFAULT_SIDEBAR_WIDTH,
   useSettingsStore,
@@ -104,14 +103,8 @@ export function AppShell({ bundle, children }: AppShellProps) {
           sectionLabel={sectionLabel}
         />
 
-        <div
-          className={cn(
-            "mx-auto flex w-full flex-1 justify-center gap-10 px-4 pt-6 pb-24 sm:px-8 sm:pt-8 sm:pb-12",
-            activeCard ? "max-w-[1040px]" : "max-w-4xl"
-          )}
-        >
+        <div className="mx-auto flex w-full max-w-4xl flex-1 justify-center px-4 pt-6 pb-24 sm:px-8 sm:pt-8 sm:pb-12">
           <div className="min-w-0 flex-1">{children}</div>
-          <TocPanel activeCard={activeCard} />
         </div>
       </SidebarInset>
 
