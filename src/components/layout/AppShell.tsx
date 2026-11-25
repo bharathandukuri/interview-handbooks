@@ -9,6 +9,10 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { appHotkeys } from "@/lib/keyboard"
 import type { HandbookBundle } from "@/lib/types"
 import { applyHandbookAccent, cn, resetHandbookAccent } from "@/lib/utils"
+import {
+  DEFAULT_SIDEBAR_WIDTH,
+  useSettingsStore,
+} from "@/store/useSettingsStore"
 
 interface AppShellProps {
   bundle: HandbookBundle
@@ -31,6 +35,9 @@ export function AppShell({ bundle, children }: AppShellProps) {
     chapter?: string
     cardId?: string
   }
+
+  const sidebarWidth = useSettingsStore((s) => s.sidebarWidth)
+  const setSidebarWidth = useSettingsStore((s) => s.setSidebarWidth)
 
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     if (typeof window === "undefined") return true
@@ -75,7 +82,7 @@ export function AppShell({ bundle, children }: AppShellProps) {
       onOpenChange={setSidebarOpen}
       style={
         {
-          "--sidebar-width": "280px",
+          "--sidebar-width": `${sidebarWidth}px`,
           "--sidebar-width-icon": "3rem",
         } as CSSProperties
       }
@@ -85,6 +92,8 @@ export function AppShell({ bundle, children }: AppShellProps) {
         activePath={pathname}
         activeChapterSlug={activeChapterSlug}
         activeCardId={activeCard?.id}
+        onResizeWidth={setSidebarWidth}
+        onResetWidth={() => setSidebarWidth(DEFAULT_SIDEBAR_WIDTH)}
       />
 
       <SidebarInset className="min-w-0 bg-background">

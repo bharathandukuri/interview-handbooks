@@ -14,6 +14,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { HandbookIcon } from "@/components/ui/handbook-icon"
 import {
   Sidebar,
   SidebarContent,
@@ -45,6 +46,8 @@ interface HandbookSidebarProps {
   activePath: string
   activeChapterSlug?: string
   activeCardId?: string
+  onResizeWidth?: (width: number) => void
+  onResetWidth?: () => void
 }
 
 export function HandbookSidebar({
@@ -52,6 +55,8 @@ export function HandbookSidebar({
   activePath,
   activeChapterSlug,
   activeCardId,
+  onResizeWidth,
+  onResetWidth,
 }: HandbookSidebarProps) {
   const { isMobile, setOpenMobile, state } = useSidebar()
   const collapsedChapters = useSettingsStore((s) => s.collapsedChapters)
@@ -102,8 +107,6 @@ export function HandbookSidebar({
     },
   ]
 
-  const overallCounts = getProgressCounts(bundle.cards, statusMap)
-
   return (
     <Sidebar collapsible="icon" id="handbook-sidebar">
       <SidebarHeader className="border-b border-sidebar-border px-3 py-3">
@@ -112,7 +115,7 @@ export function HandbookSidebar({
             <SidebarMenuButton
               asChild
               size="lg"
-              tooltip={`${handbook.name} · ${overallCounts.known}/${overallCounts.total} known`}
+              tooltip={handbook.name}
               className="hover:bg-sidebar-accent/80"
             >
               <Link
@@ -120,24 +123,14 @@ export function HandbookSidebar({
                 params={{ hb: handbook.id }}
                 onClick={closeMobileIfNeeded}
               >
-                <div
-                  className="flex size-8 shrink-0 items-center justify-center rounded-lg font-heading text-sm font-bold shadow-xs"
-                  style={{
-                    backgroundColor: "var(--accent)",
-                    color: "var(--accent-fg)",
-                  }}
-                  aria-hidden="true"
-                >
-                  {handbook.name.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="grid min-w-0 flex-1 text-left leading-tight">
-                  <span className="truncate font-heading text-sm font-semibold text-foreground">
-                    {handbook.name}
-                  </span>
-                  <span className="truncate font-mono text-[11px] text-muted-foreground">
-                    {overallCounts.known}/{overallCounts.total} known
-                  </span>
-                </div>
+                <HandbookIcon
+                  icon={handbook.icon}
+                  accent={handbook.accent}
+                  accent2={handbook.accent2}
+                />
+                <span className="min-w-0 flex-1 truncate font-heading text-sm font-semibold text-foreground">
+                  {handbook.name}
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -364,7 +357,7 @@ export function HandbookSidebar({
           </SidebarMenu>
         </SidebarFooter>
       )}
-      <SidebarRail />
+      <SidebarRail onResizeWidth={onResizeWidth} onResetWidth={onResetWidth} />
     </Sidebar>
   )
 }

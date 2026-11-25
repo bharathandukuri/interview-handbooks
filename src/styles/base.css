@@ -77,6 +77,11 @@
   [id^="section-"] {
     scroll-margin-top: 5rem;
   }
+
+  [data-resizing="true"] [data-slot="sidebar-gap"],
+  [data-resizing="true"] [data-slot="sidebar-container"] {
+    transition: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

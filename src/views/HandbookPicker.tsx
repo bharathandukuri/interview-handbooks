@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { ArrowRight, BookOpen, Layers } from "lucide-react"
 import { ThemeToggle } from "@/components/features/ThemeToggle"
+import { HandbookIcon } from "@/components/ui/handbook-icon"
 import { getHandbooksMeta, loadHandbookBundle } from "@/lib/content"
 
 export function HandbookPicker() {
@@ -43,12 +44,13 @@ export function HandbookPicker() {
             >
               <div>
                 <div className="mb-4 flex items-center justify-between">
-                  <span
-                    className="flex size-10 items-center justify-center rounded-xl font-heading text-sm font-bold"
-                    style={{ backgroundColor: hb.accent, color: "#0b0d12" }}
-                  >
-                    {hb.name.slice(0, 2).toUpperCase()}
-                  </span>
+                  <HandbookIcon
+                    icon={hb.icon}
+                    accent={hb.accent}
+                    accent2={hb.accent2}
+                    className="size-10 rounded-xl"
+                    iconClassName="size-6"
+                  />
                   <ArrowRight
                     className="size-4 text-text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand"
                     aria-hidden="true"
