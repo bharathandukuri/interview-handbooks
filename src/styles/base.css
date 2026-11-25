@@ -103,3 +103,62 @@
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+@page {
+  margin: 14mm;
+}
+
+@media print {
+  :root,
+  .dark,
+  .light {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --border: #d1d5db;
+    --text: #111827;
+    --text-muted: #374151;
+    --text-faint: #4b5563;
+    --shadow-card: none;
+    --shadow-card-hover: none;
+    color-scheme: light;
+  }
+
+  [data-slot="sidebar"],
+  [data-slot="sidebar-gap"],
+  [data-slot="sidebar-container"],
+  [data-slot="topbar"],
+  [data-slot="mobile-nav"],
+  [data-print-hide="true"] {
+    display: none !important;
+  }
+
+  body {
+    background: var(--bg) !important;
+    color: var(--text) !important;
+    font-size: 10.5pt;
+  }
+
+  [data-slot="sidebar-inset"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    background: var(--bg) !important;
+  }
+
+  [data-print-chapter] {
+    box-shadow: none !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  [data-print-chapter]:last-of-type {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  [data-print-item] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

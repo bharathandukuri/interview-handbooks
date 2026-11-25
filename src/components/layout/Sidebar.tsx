@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Home,
   Layers,
-  Palette,
   Zap,
 } from "lucide-react"
 import {
@@ -325,35 +324,20 @@ export function HandbookSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      {(allHandbooks.length > 1 || import.meta.env.DEV) && (
+      {allHandbooks.length > 1 && (
         <SidebarFooter className="border-t border-sidebar-border p-2">
           <SidebarMenu>
-            {allHandbooks.length > 1 && (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild size="sm" tooltip="Switch handbook">
-                  <Link to="/" onClick={closeMobileIfNeeded}>
-                    <ArrowLeftRight
-                      className="text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                    <span>All handbooks</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )}
-            {import.meta.env.DEV && (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild size="sm" tooltip="Design kit">
-                  <Link to="/_kit" onClick={closeMobileIfNeeded}>
-                    <Palette
-                      className="text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                    <span>UI Kit</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )}
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild size="sm" tooltip="Switch handbook">
+                <Link to="/" onClick={closeMobileIfNeeded}>
+                  <ArrowLeftRight
+                    className="text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <span>All handbooks</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
       )}

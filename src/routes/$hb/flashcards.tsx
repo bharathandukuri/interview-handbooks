@@ -12,5 +12,15 @@ export const Route = createFileRoute("/$hb/flashcards")({
 function FlashcardsRoute() {
   const bundle = Route.useLoaderData()
   const filters = Route.useSearch()
-  return <FlashcardsView bundle={bundle} filters={filters} />
+  const navigate = Route.useNavigate()
+
+  return (
+    <FlashcardsView
+      bundle={bundle}
+      filters={filters}
+      onFiltersChange={(next) => {
+        void navigate({ search: next, replace: true })
+      }}
+    />
+  )
 }
