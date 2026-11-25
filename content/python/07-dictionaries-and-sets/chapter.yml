@@ -1,0 +1,3 @@
+title: Dictionaries and Sets
+icon: database
+description: Store key-value pairs in dictionaries, count frequencies, filter unique items with sets, and solve fast O(1) lookup problems like Two Sum.

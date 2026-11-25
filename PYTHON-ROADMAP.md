@@ -19,17 +19,17 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 ## Part 2: Collecting data
 
-| #   | Chapter                    | What it covers                                                                | Practice problems (examples)                    | Status  |
-| --- | -------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------- | ------- |
-| 06  | Lists and Tuples           | Lists, methods, slicing, changing vs not changing, tuples, unpacking, copying | Max of a list, remove duplicates, rotate a list | NEXT    |
-| 07  | Dictionaries and Sets      | Key/value pairs, counting, sets, membership                                   | Word counter, first unique letter, Two Sum      | PLANNED |
-| 08  | Comprehensions and Sorting | List/dict/set comprehensions, sorted, key, enumerate, zip                     | Squares of evens, sort by length, group words   | PLANNED |
+| #   | Chapter                    | What it covers                                                                | Practice problems (examples)                    | Status |
+| --- | -------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------- | ------ |
+| 06  | Lists and Tuples           | Lists, methods, slicing, changing vs not changing, tuples, unpacking, copying | Max of a list, remove duplicates, rotate a list | DONE   |
+| 07  | Dictionaries and Sets      | Key/value pairs, counting, sets, membership                                   | Word counter, first unique letter, Two Sum      | DONE   |
+| 08  | Comprehensions and Sorting | List/dict/set comprehensions, sorted, key, enumerate, zip                     | Squares of evens, sort by length, group words   | DONE   |
 
 ## Part 3: Writing real programs
 
 | #   | Chapter                      | What it covers                                                        | Practice problems (examples)              | Status  |
 | --- | ---------------------------- | --------------------------------------------------------------------- | ----------------------------------------- | ------- |
-| 09  | Functions                    | def, return, arguments, defaults, \*args/\*\*kwargs, scope, recursion | Factorial, Fibonacci, safe divide         | PLANNED |
+| 09  | Functions                    | def, return, arguments, defaults, \*args/\*\*kwargs, scope, recursion | Factorial, Fibonacci, safe divide         | NEXT    |
 | 10  | Errors and Files             | try/except, raise, reading and writing files, with, JSON              | Count words in a file, safe number reader | PLANNED |
 | 11  | Modules and Standard Library | import, collections, itertools, datetime, random, pip and venv        | Most common word, days until a date       | PLANNED |
 | 12  | Object-Oriented Python       | Classes, self, methods, inheritance, dunder methods, dataclass        | Bank account, Stack class, Money class    | PLANNED |

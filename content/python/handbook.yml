@@ -11,3 +11,6 @@ chapters:
   - 03-operators-and-decisions
   - 04-strings
   - 05-loops
+  - 06-lists-and-tuples
+  - 07-dictionaries-and-sets
+  - 08-comprehensions-and-sorting

@@ -1,0 +1,3 @@
+title: Comprehensions and Sorting
+icon: sparkles
+description: Build lists, dicts and sets cleanly with comprehensions, pair data with enumerate and zip, and sort anything with sorted() and custom keys.
