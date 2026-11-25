@@ -47,7 +47,7 @@ Status: DONE = finished and in the app. NEXT = being written. PLANNED = not star
 
 | #   | Chapter               | What it covers                                                                         | Status |
 | --- | --------------------- | -------------------------------------------------------------------------------------- | ------ |
-| 17  | Interview Problem Set | Hash map, two pointers, sliding window, stack, binary search, BFS/DFS, heap, LRU, trie | NEXT   |
+| 17  | Interview Problem Set | Hash map, two pointers, sliding window, stack, binary search, BFS/DFS, heap, LRU, trie | DONE   |
 
 ## Writing rules used for every card
 
