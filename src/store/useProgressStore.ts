@@ -1,14 +1,44 @@
 import { z } from "zod"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import type { CardStatus } from "@/lib/types"
+import type { CardStatus } from "../lib/types.ts"
+import { createSafeStorage } from "./storage.ts"
 
-const exportedProgressSchema = z.object({
+export const exportedProgressSchema = z.object({
   version: z.literal(1),
   status: z.record(z.string(), z.enum(["known", "revisit"])),
   bookmarks: z.array(z.string()),
   lastVisited: z.record(z.string(), z.string()),
 })
+
+export type ExportedProgress = z.infer<typeof exportedProgressSchema>
+
+export function parseProgressBackup(
+  raw: string
+): { ok: true; data: ExportedProgress } | { ok: false; error: string } {
+  try {
+    const parsedJson: unknown = JSON.parse(raw)
+    const validated = exportedProgressSchema.safeParse(parsedJson)
+    if (!validated.success) {
+      return {
+        ok: false,
+        error: validated.error.issues[0]?.message ?? "Invalid progress format",
+      }
+    }
+    return {
+      ok: true,
+      data: {
+        ...validated.data,
+        bookmarks: Array.from(new Set(validated.data.bookmarks)),
+      },
+    }
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Failed to parse JSON file",
+    }
+  }
+}
 
 export interface ProgressState {
   status: Record<string, CardStatus>
@@ -92,29 +122,14 @@ export const useProgressStore = create<ProgressState>()(
       },
 
       importJSON: (raw) => {
-        try {
-          const parsedJson: unknown = JSON.parse(raw)
-          const validated = exportedProgressSchema.safeParse(parsedJson)
-          if (!validated.success) {
-            return {
-              ok: false,
-              error:
-                validated.error.issues[0]?.message ?? "Invalid progress format",
-            }
-          }
-          set({
-            status: validated.data.status,
-            bookmarks: Array.from(new Set(validated.data.bookmarks)),
-            lastVisited: validated.data.lastVisited,
-          })
-          return { ok: true }
-        } catch (err) {
-          return {
-            ok: false,
-            error:
-              err instanceof Error ? err.message : "Failed to parse JSON file",
-          }
-        }
+        const parsed = parseProgressBackup(raw)
+        if (!parsed.ok) return parsed
+        set({
+          status: parsed.data.status,
+          bookmarks: parsed.data.bookmarks,
+          lastVisited: parsed.data.lastVisited,
+        })
+        return { ok: true }
       },
 
       reset: () =>
@@ -126,7 +141,7 @@ export const useProgressStore = create<ProgressState>()(
     {
       name: "ihb:v1",
       version: 1,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createSafeStorage()),
       partialize: (state) => ({
         status: state.status,
         bookmarks: state.bookmarks,

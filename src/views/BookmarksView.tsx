@@ -1,8 +1,12 @@
 import { Link } from "@tanstack/react-router"
-import { ArrowRight, Bookmark } from "lucide-react"
+import { ArrowRight, Bookmark, Check, RotateCcw } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { DifficultyBadge } from "@/components/ui/difficulty-badge"
 import { InlineCodeTitle } from "@/components/ui/inline-code-title"
+import { getOrderedCards } from "@/lib/selectors"
+import { stripInlineCode } from "@/lib/text"
 import type { HandbookBundle } from "@/lib/types"
+import { cn } from "@/lib/utils"
 import { useProgressStore } from "@/store/useProgressStore"
 
 interface BookmarksViewProps {
@@ -11,7 +15,15 @@ interface BookmarksViewProps {
 
 export function BookmarksView({ bundle }: BookmarksViewProps) {
   const bookmarks = useProgressStore((s) => s.bookmarks)
-  const bookmarkedCards = bundle.cards.filter((c) => bookmarks.includes(c.id))
+  const statusMap = useProgressStore((s) => s.status)
+  const toggleBookmark = useProgressStore((s) => s.toggleBookmark)
+
+  const bookmarkedCards = getOrderedCards(bundle).filter((c) =>
+    bookmarks.includes(c.id)
+  )
+  const chapterTitles = new Map(
+    bundle.handbook.chapters.map((chapter) => [chapter.slug, chapter.title])
+  )
 
   return (
     <div className="space-y-6">
@@ -37,33 +49,89 @@ export function BookmarksView({ bundle }: BookmarksViewProps) {
           <p className="mt-1 text-xs text-muted-foreground">
             Click the bookmark icon on any card to pin it here for quick review.
           </p>
+          <Button asChild variant="outline" size="sm" className="mt-4">
+            <Link to="/$hb" params={{ hb: bundle.handbook.id }}>
+              Browse chapters
+            </Link>
+          </Button>
         </div>
       ) : (
         <div className="grid gap-3">
-          {bookmarkedCards.map((card) => (
-            <Link
-              key={card.id}
-              to="/$hb/t/$cardId"
-              params={{ hb: bundle.handbook.id, cardId: card.id }}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-colors hover:border-[var(--accent-ring)]"
-            >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <DifficultyBadge difficulty={card.difficulty} />
-                  <span className="font-mono text-xs text-text-faint">
-                    {card.chapter}
-                  </span>
-                </div>
-                <div className="font-heading text-base font-semibold group-hover:text-brand">
-                  <InlineCodeTitle text={card.title} />
+          {bookmarkedCards.map((card) => {
+            const cardStatus = statusMap[card.id]
+            const chapterTitle = chapterTitles.get(card.chapter) ?? card.chapter
+            return (
+              <div
+                key={card.id}
+                className="group flex items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-(--shadow-card) transition-colors hover:border-[var(--accent-ring)]"
+              >
+                <Link
+                  to="/$hb/t/$cardId"
+                  params={{ hb: bundle.handbook.id, cardId: card.id }}
+                  className="min-w-0 flex-1 space-y-1.5"
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <DifficultyBadge difficulty={card.difficulty} />
+                    <span className="font-mono text-xs text-text-faint">
+                      {chapterTitle}
+                    </span>
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 font-mono text-[11px]",
+                        cardStatus === "known"
+                          ? "text-[var(--easy)]"
+                          : cardStatus === "revisit"
+                            ? "text-[var(--medium)]"
+                            : "text-text-faint"
+                      )}
+                    >
+                      {cardStatus === "known" && (
+                        <Check className="size-3" aria-hidden="true" />
+                      )}
+                      {cardStatus === "revisit" && (
+                        <RotateCcw className="size-3" aria-hidden="true" />
+                      )}
+                      <span>
+                        {cardStatus === "known"
+                          ? "Known"
+                          : cardStatus === "revisit"
+                            ? "Revisit"
+                            : `${card.readTime} min`}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="font-heading text-base font-semibold text-foreground group-hover:text-brand">
+                    <InlineCodeTitle text={card.title} />
+                  </div>
+                </Link>
+
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => toggleBookmark(card.id)}
+                    aria-label={`Remove bookmark for ${stripInlineCode(card.title)}`}
+                    title="Remove bookmark"
+                    className="text-brand hover:text-destructive"
+                  >
+                    <Bookmark
+                      className="size-4 fill-current"
+                      aria-hidden="true"
+                    />
+                  </Button>
+                  <Link
+                    to="/$hb/t/$cardId"
+                    params={{ hb: bundle.handbook.id, cardId: card.id }}
+                    aria-label={`Open ${stripInlineCode(card.title)}`}
+                    className="rounded-md p-1 text-muted-foreground transition-colors group-hover:text-brand"
+                  >
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
-              <ArrowRight
-                className="size-4 shrink-0 text-muted-foreground group-hover:text-brand"
-                aria-hidden="true"
-              />
-            </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

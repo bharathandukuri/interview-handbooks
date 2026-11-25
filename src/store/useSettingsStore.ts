@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+import { createSafeStorage } from "./storage.ts"
 
 export type ThemeSetting = "dark" | "light" | "system"
 export type FontScaleSetting = 0.9 | 1 | 1.1 | 1.2
@@ -40,10 +41,11 @@ const DEFAULT_SETTINGS = {
 
 export function resolveTheme(theme: ThemeSetting): "dark" | "light" {
   if (theme !== "system") return theme
-  if (typeof window === "undefined") return "dark"
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light"
+  const matchMedia = (
+    globalThis as { matchMedia?: (query: string) => { matches: boolean } }
+  ).matchMedia
+  if (typeof matchMedia !== "function") return "dark"
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -71,7 +73,7 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: "ihb:settings:v1",
       version: 2,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createSafeStorage()),
       migrate: (persistedState) => {
         const state = (persistedState ?? {}) as Partial<SettingsState>
         const theme =
